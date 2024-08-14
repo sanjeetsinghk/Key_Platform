@@ -2,6 +2,7 @@ import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { NotfoundComponent } from './modules/components/notfound/notfound.component';
 import { AppLayoutComponent } from "./layout/app.layout.component";
+import { AuthGuard } from './modules/service/auth.guard';
 
 @NgModule({
     imports: [
@@ -9,7 +10,9 @@ import { AppLayoutComponent } from "./layout/app.layout.component";
             {
                 path: '', component: AppLayoutComponent,
                 children: [
-                    { path: '', loadChildren: () => import('./modules/components/dashboard/dashboard.module').then(m => m.DashboardModule) },
+                    { path: '',canActivate: [AuthGuard], loadChildren: () => import('./modules/components/dashboard/dashboard.module').then(m => m.DashboardModule) },
+                    { path: 'company',canActivate: [AuthGuard], loadChildren: () => import('./modules/components/company/company.module').then(m => m.CompanyModule) },
+                    { path: 'users', loadChildren: () => import('./modules/components/users/users.module').then(m => m.UsersModule) },
                     { path: 'uikit', loadChildren: () => import('./modules/components/uikit/uikit.module').then(m => m.UIkitModule) },
                     { path: 'utilities', loadChildren: () => import('./modules/components/utilities/utilities.module').then(m => m.UtilitiesModule) },
                     { path: 'documentation', loadChildren: () => import('./modules/components/documentation/documentation.module').then(m => m.DocumentationModule) },

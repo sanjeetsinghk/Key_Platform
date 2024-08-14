@@ -9,6 +9,8 @@ import {
 } from '../models/auth.model';
 import { AuthState } from './auth.state';
 import { environment } from 'src/environments/environment';
+import { ICompanyAdmin } from '../models/company-admin.model';
+import { Router } from '@angular/router';
 
 
 @Injectable({ providedIn: 'root' })
@@ -18,26 +20,52 @@ export class AuthService {
   private _localSetSession = 'localdata/setsession';
   private _localLogout = 'localdata/logou';
 
-  constructor(private http: HttpClient, private authState: AuthState) {}
+  constructor(private router:Router,private http: HttpClient, private authState: AuthState) {}
 
   // login method
   Login(username: string, password: string): Observable<any> {
-    return this.http.post(this._loginUrl+'usermanagement/login', { email:username, password:password }).pipe(
+    return this.http.post(this._loginUrl+'authManagement/login', { email:username, password:password }).pipe(
       map((response) => {
         // prepare the response to be handled, then return
-        const retUser: IAuthInfo = NewAuthInfo((<any>response).data);
+        const retUser: IAuthInfo = NewAuthInfo((<any>response).resultData);
 
         // save session and return user if needed
         return this.authState.SaveSession(retUser);
       }),
       // if we are setting cookie on server, this is the place to call local server
-      switchMap((user) => this.SetLocalSession(user)),
+      //switchMap((user) => this.SetLocalSession(user)),
       catchError((error)=>{
         return throwError(error || 'server error.')
       })
     );
   }
-
+  
+  RegisterUserToCompany(data:ICompanyAdmin):Observable<any>{
+    return this.http.post(this._loginUrl+'authManagement/register-user-to-company', data).pipe(
+        map((response) => {
+          // prepare the response to be handled, then return
+         return response;
+        }),
+        // if we are setting cookie on server, this is the place to call local server
+        //switchMap((user) => this.SetLocalSession(user)),
+        catchError((error)=>{
+          return throwError(error || 'server error.')
+        })
+      );
+  }
+  RegisterCompanyAdmin(data:ICompanyAdmin):Observable<any>{
+    return this.http.post(this._loginUrl+'authManagement/register-company-admin', data).pipe(
+        map((response) => {
+          // prepare the response to be handled, then return
+         return response;
+        }),
+        // if we are setting cookie on server, this is the place to call local server
+        //switchMap((user) => this.SetLocalSession(user)),
+        catchError((error)=>{
+          return throwError(error || 'server error.')
+        })
+      );
+  }
   RefreshToken(): Observable<IAuthInfo> {
     return this.http
       .post(this._refreshUrl, { token: this.authState.GetRefreshToken() })
@@ -57,7 +85,7 @@ export class AuthService {
         }),
         // if we use set session on local server, then this is the place
         // to call it
-        switchMap((response) => this.SetLocalSession(response))
+        //switchMap((response) => this.SetLocalSession(response))
       );
   }
 
@@ -74,14 +102,9 @@ export class AuthService {
     );
   }
 
-  Logout(): Observable<boolean> {
+  Logout() {
     // logout locally
     const data = PrepLogout();
-
-    return this.http.post(this._localLogout, data).pipe(
-      map((response) => {
-        return true;
-      })
-    );
+    this.authState.Logout(true);
   }
 }

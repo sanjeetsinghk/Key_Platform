@@ -65,7 +65,7 @@ export class LoginComponent {
         next: (result) => {
             // redirect to dashbaord
             this.router.navigateByUrl(
-            this.authState.redirectUrl || '/private/dashboard'
+            this.authState.redirectUrl || ''
             );
         },
         });

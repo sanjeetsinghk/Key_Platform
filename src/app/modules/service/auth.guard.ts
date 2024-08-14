@@ -51,7 +51,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       map((user) => {
         // if user exists let them in, else redirect to login
         if (!user) {
-          this._router.navigateByUrl('/public/login');
+          this._router.navigateByUrl('/auth/login');
           return false;
         }
         // user exists

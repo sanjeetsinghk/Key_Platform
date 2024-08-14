@@ -1,0 +1,77 @@
+<div class="grid p-fluid" *ngIf="isLoaded">
+    <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            
+                <div class="row">
+                    <div class="col-12">
+                        <label for="company" class="block text-900 text-xl font-medium mb-2">Companies</label>
+                        <p-dropdown 
+                        formControlName="company_name" 
+                        appendTo="body"
+                        [filter]="true"
+                        filterBy="name" 
+                        [showClear]="true"
+                        [options]="companyList"
+                        optionLabel="name"
+                        placeholder="Select a Company" />
+                        <div *ngIf="submitted && f.company_name.errors" class="invalid-feedback mb-1">
+                            <div *ngIf="f.company_name.errors.required">Company name is required</div>
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label for="user_email" class="block text-900 text-xl font-medium mb-2">Company User Email</label>
+                    
+                        <input id="user_email" type="text" placeholder="Company user email" pInputText 
+                        formControlName="user_email"
+                        class="form-control"
+                        [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.user_email.errors }"
+                        class="w-full md:w-30rem mb-1" style="padding:1rem">
+                        <div *ngIf="submitted && f.user_email.errors" class="invalid-feedback mb-1">
+                            <div *ngIf="f.user_email.errors.required">User email is required</div>
+                            <div *ngIf="f.user_email.errors.email">Email is invalid</div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="role" class="block text-900 text-xl font-medium mb-2">Role</label>
+                        <p-dropdown 
+                        formControlName="role" 
+                        appendTo="body"
+                        [filter]="true"
+                        filterBy="name" 
+                        [showClear]="true"
+                        [options]="roleTypeList"
+                        optionLabel="name"
+                        placeholder="Select a Role" />
+                        <div *ngIf="submitted && f.role.errors" class="invalid-feedback mb-1">
+                            <div *ngIf="f.role.errors.required">Role is required</div>
+                           
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="externalId" class="block text-900 text-xl font-medium mb-2">External Id</label>
+                        <input id="externalId" type="text" placeholder="External Id" pInputText 
+                        formControlName="externalId"
+                        class="form-control"                       
+                        class="w-full md:w-30rem mb-1" style="padding:1rem">
+                    </div>
+                    <div class="col-12">
+                       
+                    </div>
+                </div>
+                <div class="flex align-items-center justify-content-between mb-5 gap-5">
+                    <div class="flex align-items-center ml-2">
+                        <p-checkbox name="check" binary="true" label="Blocked" value="" id="rememberme1" formControlName="isBlocked" styleClass="mr-2"></p-checkbox>                        
+                    </div>                   
+                </div>
+                <div class="flex align-items-center justify-content-end mb-5 gap-1">
+                    <p-button label="Save" type="submit"  [raised]="true" severity="success" />                    
+                    <p-button label="Cancel" [text]="true" (click)="cancel()" [raised]="true" severity="secondary" />                    
+                </div>
+        </div>
+    </div>
+</form>
+</div>

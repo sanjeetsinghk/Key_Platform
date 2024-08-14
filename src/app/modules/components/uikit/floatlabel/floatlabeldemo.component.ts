@@ -47,9 +47,9 @@ export class FloatLabelDemoComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.countryService.getCountries().then(countries => {
-            this.countries = countries;
-        });
+        // this.countryService.getCountries().then(countries => {
+        //     this.countries = countries;
+        // });
     }
 
     searchCountry(event: any) {

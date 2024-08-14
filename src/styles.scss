@@ -19,3 +19,33 @@ $gutter: 1rem; //for primeflex grid system
     font-size: large;
     color: #dc3545;
 }
+.add-company .p-dialog-content{
+    overflow: auto!important;
+}
+
+
+
+.loading-container {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.7);
+  z-index: 9999;
+}
+
+.blink {
+    animation: blinker 1s step-start infinite;
+    left: 50%;
+    top: 40%;
+    position: absolute;
+    color: #fffdfa;
+  }
+  
+  @keyframes blinker {
+    50% {
+      opacity: 0;
+    }
+  }

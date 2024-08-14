@@ -4,9 +4,9 @@ import { IUser } from "./user.model";
 // auth mode is what comes back after login
 export interface IAuthInfo {
   payload?: IUser;
-  accessToken?: string;
+  token?: string;
   refreshToken?: string;
-  expiresAt?: number; // number of milliseconds of its life time
+  expiration: Date; // number of milliseconds of its life time
 }
 
 // example returnd from server
@@ -25,14 +25,13 @@ export interface IAuthInfo {
 export const NewAuthInfo = (data: any): IAuthInfo => {
   return {
     payload: {
-      email: data.payload.email,
-      name: data.payload.name,
-      id: data.payload.id,
+      email: data.email,
+      roles:data.roles,
     },
-    accessToken: data.accessToken,
-    refreshToken: data.refreshToken,
+    token: data.token,
+    //refreshToken: data.refreshToken,
     // map expiresIn value to exact time stamp
-    expiresAt: Date.now() + data.expiresIn * 1000,
+    expiration:data.expiration,
   };
 };
 

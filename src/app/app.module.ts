@@ -1,5 +1,5 @@
 import { ErrorHandler, NgModule } from '@angular/core';
-import { HashLocationStrategy, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { CommonModule, HashLocationStrategy, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
@@ -20,7 +20,7 @@ import { GlobalErrorHandlerService } from './modules/service/global-error-handle
 
 @NgModule({
     declarations: [AppComponent, NotfoundComponent],
-    imports: [AppRoutingModule, AppLayoutModule,ToastModule,ReactiveFormsModule],
+    imports: [CommonModule,AppRoutingModule, AppLayoutModule,ToastModule,ReactiveFormsModule],
     providers: [
         { provide: LocationStrategy, useClass: PathLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,

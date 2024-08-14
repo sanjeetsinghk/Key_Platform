@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { IAuthInfo } from '../models/auth';
+import { IAuthInfo } from '../models/auth.model';
+
 
 // to make a cookie readable in SSR, inject the token from nguniversal module
 // import { REQUEST } from '@nguniversal/express-engine/tokens';
@@ -76,7 +77,7 @@ export class AuthState {
     }
     */
     const _localuser: IAuthInfo = JSON.parse(localStorage.getItem('user'));
-    if (_localuser && _localuser.accessToken) {
+    if (_localuser && _localuser.token) {
       return <IAuthInfo>_localuser;
     }
     return null;
@@ -91,7 +92,7 @@ export class AuthState {
       encodeURIComponent(JSON.stringify(user));
 
     // use expiration tp expire the cookie
-    const dtExpires = new Date(user.expiresAt);
+    const dtExpires = new Date(user.expiration);
 
     cookieStr += ';expires=' + dtExpires.toUTCString();
     cookieStr += ';path=/';
@@ -104,13 +105,13 @@ export class AuthState {
     document.cookie = cookieStr;
   }
   private _DeleteCookie(): void {
-    // void accessToken but more importantly expire
-    this._SetCookie({ accessToken: '', expiresAt: 0 });
+    // void token but more importantly expire
+    this._SetCookie({ token: '', expiration: null });
   }
 
   // new saveSessions method
   SaveSession(user: IAuthInfo): IAuthInfo | null {
-    if (user.accessToken) {
+    if (user.token) {
       this._SaveUser(user);
       this.SetState(user);
       return user;
@@ -125,8 +126,8 @@ export class AuthState {
   UpdateSession(user: IAuthInfo) {
     const _localuser: IAuthInfo = this._GetUser();
     if (_localuser) {
-      // only set accesstoken and refreshtoken
-      _localuser.accessToken = user.accessToken;
+      // only set token and refreshtoken
+      _localuser.token = user.token;
       _localuser.refreshToken = user.refreshToken;
 
       this._SaveUser(_localuser);
@@ -139,14 +140,14 @@ export class AuthState {
   }
 
   CheckAuth(user: IAuthInfo) {
-    // if no user, or no accessToken, something terrible must have happened
-    if (!user || !user.accessToken) {
+    // if no user, or no token, something terrible must have happened
+    if (!user || !user.token) {
       return false;
     }
     // if now is larger that expiresAt, it expired
-    if (Date.now() > user.expiresAt) {
-      return false;
-    }
+    // if (Date.now() >  new Date(user.expiration)) {
+    //   return false;
+    // }
 
     return true;
   }
@@ -159,14 +160,14 @@ export class AuthState {
     this._RemoveUser();
 
     if (reroute) {
-      this.router.navigateByUrl('/public/login');
+      this.router.navigateByUrl('/auth/login');
     }
   }
 
   GetToken() {
     const _auth = this.stateItem.getValue();
     // check if auth is still valid first before you return
-    return this.CheckAuth(_auth) ? _auth.accessToken : null;
+    return this.CheckAuth(_auth) ? _auth.token : null;
   }
   GetRefreshToken() {
     const _auth = this.stateItem.getValue();

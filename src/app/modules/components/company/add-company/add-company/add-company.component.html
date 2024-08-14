@@ -1,0 +1,86 @@
+<div class="grid p-fluid" *ngIf="isLoaded">
+    <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            
+                <div class="row">
+                    <div class="col-12">
+                        <label for="companyname" class="block text-900 text-xl font-medium mb-2">Company Name</label>
+                   
+                        <input id="companyname" type="text" placeholder="Company name" pInputText 
+                        formControlName="company_name"
+                        class="form-control"
+                        [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.company_name.errors }"
+                        class="w-full md:w-30rem mb-1" style="padding:1rem">
+                        <div *ngIf="submitted && f.company_name.errors" class="invalid-feedback mb-1">
+                            <div *ngIf="f.company_name.errors.required">Company name is required</div>
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label for="companyemail" class="block text-900 text-xl font-medium mb-2">Company Admin Email</label>
+                    
+                        <input id="companyemail" type="text" placeholder="Company email" pInputText 
+                        formControlName="company_email"
+                        class="form-control"
+                        [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.company_email.errors }"
+                        class="w-full md:w-30rem mb-1" style="padding:1rem">
+                        <div *ngIf="submitted && f.company_email.errors" class="invalid-feedback mb-1">
+                            <div *ngIf="f.company_email.errors.required">Company admin email is required</div>
+                           
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="description" class="block text-900 text-xl font-medium mb-2">Company Description</label>
+                        <textarea 
+                        id="description" 
+                        formControlName="description"
+                        rows="5" cols="30" 
+                        pInputTextarea>
+                        </textarea>
+                    </div>
+                    <div class="col-12">
+                        <label for="externalId" class="block text-900 text-xl font-medium mb-2">External Id</label>
+                        <input id="externalId" type="text" placeholder="External Id" pInputText 
+                        formControlName="externalId"
+                        class="form-control"                       
+                        class="w-full md:w-30rem mb-1" style="padding:1rem">
+                    </div>
+                    <div class="col-12">
+                        <label for="countries" class="block text-900 text-xl font-medium mb-2">Country</label>
+                        <p-dropdown 
+                        formControlName="country" 
+                        appendTo="body"
+                        [filter]="true"
+                        filterBy="name" 
+                        [showClear]="true"
+                        [options]="countries"
+                        optionLabel="name"
+                        placeholder="Select a Country" />
+                    </div>
+                </div>
+                <div class="flex align-items-center justify-content-between mb-5 gap-5">
+                    <div class="flex align-items-center">
+                        <p-checkbox name="check" binary="true" label="Blocked" value="" id="rememberme1" formControlName="isBlocked" styleClass="mr-2"></p-checkbox>
+                        
+                    </div>
+                    <div class="flex align-items-center justify-content-between">
+                    <p-checkbox name="check" binary="true" label="Open for collaboration" value="" id="organizer" formControlName="isOrganizer" styleClass="mr-2"></p-checkbox>
+                       
+                    </div>
+                </div>
+                <div class="flex align-items-center justify-content-end mb-5 gap-1">
+                    <p-button label="Save" type="submit"  [raised]="true" severity="success" />
+                    
+                    <p-button label="Cancel" [text]="true" (click)="cancel()" [raised]="true" severity="secondary" />
+                    
+                </div>
+                
+                
+                
+        </div>
+    </div>
+</form>
+</div>

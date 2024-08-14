@@ -3,4 +3,8 @@
     [showTransitionOptions]="'1000ms'" 
     [hideTransitionOptions]="'1000ms'" 
     [showTransformOptions]="'translateX(100%)'" />
+<div *ngIf="loading" class="loading-container flex-content-center">
+    <p-progressSpinner class="blink" ariaLabel="loading" />
+    <h1 class="blink">Loading.....</h1>
+</div>
 <router-outlet></router-outlet>
