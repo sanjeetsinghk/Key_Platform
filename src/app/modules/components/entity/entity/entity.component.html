@@ -1,0 +1,20 @@
+<p-toast 
+    [showTransformOptions]="'translateY(100%)'" 
+    [showTransitionOptions]="'1000ms'" 
+    [hideTransitionOptions]="'1000ms'" 
+    [showTransformOptions]="'translateX(100%)'" />
+<div class="grid">
+    <div class="ml-1 col-12 flex card">
+        <p-tabView orientation="left" class="w-full">
+            <p-tabPanel header="Entity Info" class="line-height-3 m-0 w-full">
+                <app-product-info></app-product-info>
+            </p-tabPanel>
+            <p-tabPanel header="Entity Tree" class="line-height-3 m-0 w-full">
+            </p-tabPanel>
+            <p-tabPanel header="Performance" class="line-height-3 m-0 w-full">
+            </p-tabPanel>
+            <p-tabPanel header="Scenario" class="line-height-3 m-0 w-full">
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+</div>

@@ -3,6 +3,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Product } from 'src/app/modules/api/product';
 import { ProductService } from 'src/app/modules/service/product.service';
 
+
 @Component({
     templateUrl: './overlaysdemo.component.html',
     providers: [ConfirmationService, MessageService]
@@ -34,20 +35,20 @@ export class OverlaysDemoComponent implements OnInit {
 
         this.images = [];
         this.images.push({
-            source: 'assets/modules/images/sopranos/sopranos1.jpg',
-            thumbnail: 'assets/modules/images/sopranos/sopranos1_small.jpg', title: 'Sopranos 1'
+            source: 'assets/demo/images/sopranos/sopranos1.jpg',
+            thumbnail: 'assets/demo/images/sopranos/sopranos1_small.jpg', title: 'Sopranos 1'
         });
         this.images.push({
-            source: 'assets/modules/images/sopranos/sopranos2.jpg',
-            thumbnail: 'assets/modules/images/sopranos/sopranos2_small.jpg', title: 'Sopranos 2'
+            source: 'assets/demo/images/sopranos/sopranos2.jpg',
+            thumbnail: 'assets/demo/images/sopranos/sopranos2_small.jpg', title: 'Sopranos 2'
         });
         this.images.push({
-            source: 'assets/modules/images/sopranos/sopranos3.jpg',
-            thumbnail: 'assets/modules/images/sopranos/sopranos3_small.jpg', title: 'Sopranos 3'
+            source: 'assets/demo/images/sopranos/sopranos3.jpg',
+            thumbnail: 'assets/demo/images/sopranos/sopranos3_small.jpg', title: 'Sopranos 3'
         });
         this.images.push({
-            source: 'assets/modules/images/sopranos/sopranos4.jpg',
-            thumbnail: 'assets/modules/images/sopranos/sopranos4_small.jpg', title: 'Sopranos 4'
+            source: 'assets/demo/images/sopranos/sopranos4.jpg',
+            thumbnail: 'assets/demo/images/sopranos/sopranos4_small.jpg', title: 'Sopranos 4'
         });
     }
 

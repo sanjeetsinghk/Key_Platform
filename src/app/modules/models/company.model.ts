@@ -1,3 +1,5 @@
+import { ICompanyUsers } from "./company-users.model";
+
 export interface ICompany{
     id?:number;
     name?:string;
@@ -7,4 +9,6 @@ export interface ICompany{
     isOrganizer:boolean;
     externalId?:string;
     isBlocked:boolean;
+    isSelected:boolean;
+    companyUsers?:ICompanyUsers
 }

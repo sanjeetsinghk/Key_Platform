@@ -3,7 +3,11 @@
 export interface IUser {
    
     email: string;
-    roles:Roles[]
+    roles:Roles[];
+    companyIds:string;
+    expiration:string;
+    selectedCompany:number;
+    companyName:string;
 }
 export interface Roles{
     id:number;

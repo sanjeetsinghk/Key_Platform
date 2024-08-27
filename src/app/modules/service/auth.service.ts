@@ -101,10 +101,21 @@ export class AuthService {
       })
     );
   }
-
-  Logout() {
-    // logout locally
-    const data = PrepLogout();
-    this.authState.Logout(true);
-  }
+getUserEmail(){
+    return this.authState.getUserEmail();
+}
+getUserId(){
+  return this.authState.getUserId();
+}
+getSelectedCompany(){
+  return this.authState.getSelectedCompany();
+}
+getSelectedCompanyName(){
+  return this.authState.getSelectedCompanyName();
+}
+Logout() {
+  // logout locally
+  const data = PrepLogout();
+  this.authState.Logout(true);
+}
 }

@@ -169,6 +169,22 @@ export class AuthState {
     // check if auth is still valid first before you return
     return this.CheckAuth(_auth) ? _auth.token : null;
   }
+  getUserEmail(){
+    const _localuser: IAuthInfo = this._GetUser();
+    return _localuser.payload.email;
+  }
+  getUserId(){
+    const _localuser: IAuthInfo = this._GetUser();
+    return _localuser.payload.roles[0].userId;
+  }
+  getSelectedCompany(){
+    const _localuser: IAuthInfo = this._GetUser();
+    return _localuser.payload.selectedCompany;
+  }
+  getSelectedCompanyName(){
+    const _localuser: IAuthInfo = this._GetUser();
+    return _localuser.payload.companyName;
+  }
   GetRefreshToken() {
     const _auth = this.stateItem.getValue();
     // check if auth is still valid first before you return

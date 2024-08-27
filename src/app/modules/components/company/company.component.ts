@@ -7,6 +7,8 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AddCompanyComponent } from './add-company/add-company/add-company.component';
 import { CompanyService } from '../../service/company.service';
 import { ICompany } from '../../models/company.model';
+import { ISelectedCompanyDto } from '../../models/company-selection.model';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-company', 
@@ -16,7 +18,8 @@ import { ICompany } from '../../models/company.model';
 })
 export class CompanyComponent {
   productDialog: boolean = false;
-
+  selectedCompanyDialog:boolean=false;
+  selectedCompany:ICompany;
   deleteProductDialog: boolean = false;
 
   deleteProductsDialog: boolean = false;
@@ -37,7 +40,7 @@ export class CompanyComponent {
   ref: DynamicDialogRef | undefined;
 
     
-  constructor( private companyService: CompanyService,public dialogService: DialogService, private messageService: MessageService) { }
+  constructor(private authService:AuthService ,private companyService: CompanyService,public dialogService: DialogService, private messageService: MessageService) { }
 
   ngOnInit() {
     this.cols = [
@@ -125,6 +128,20 @@ export class CompanyComponent {
   }
   updateCompany(company:ICompany[]){
     this.companyService.updateCompany(company).subscribe((resp)=>{
+      this.getCompanies();
+    })
+  }
+  defaultSelection(company:ICompany){
+    this.selectedCompanyDialog=true;
+    this.selectedCompany=company;
+  }
+  confirmSelected(){
+    let data:ISelectedCompanyDto={
+      CompanyId:this.selectedCompany.id,
+      UserId:this.authService.getUserId()
+    }
+    this.companyService.defaultCompanySelection(data).subscribe((x)=>{
+      this.selectedCompanyDialog=false;
       this.getCompanies();
     })
   }

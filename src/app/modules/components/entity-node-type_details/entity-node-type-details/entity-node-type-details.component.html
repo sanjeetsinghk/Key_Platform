@@ -1,0 +1,106 @@
+<div class="grid p-fluid">  
+    <div class="col-12">
+        <div class="card px-6 py-6 w-full">           
+            <div class="grid">            
+                <div class="ml-1 col-12 flex">
+                    <p-tabView orientation="left" class="w-full">
+                        <p-tabPanel header="Entity Node Type Details" class="line-height-3 m-0 w-full">
+                            <form [formGroup]="form" (ngSubmit)="save()">
+                                <div class="p-fluid">
+        
+                                    <div class="grid">
+                                        <div class="col-12">
+                                            <h5>Entity Node Type Details</h5>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="name" class="block text-700 font-medium mb-2">Name</label>                    
+                                            <input id="name" type="text" placeholder="Name" pInputText 
+                                                formControlName="name"
+                                                class="form-control"
+                                                [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.name.errors }"
+                                                class=" mb-1" style="padding:1rem">
+                                            <div *ngIf="submitted && f.name.errors" class="invalid-feedback mb-1">
+                                                <div *ngIf="f.name.errors.required">Name is required</div>
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="role" class="block text-700 font-medium mb-2">Description</label>
+                                            <textarea 
+                                                rows="1"
+                                                cols="20" 
+                                                pInputTextarea 
+                                                formControlName="description">
+                                            </textarea>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="role" class="block text-700 font-medium mb-2">Dimension 1</label>
+                                            <textarea 
+                                                rows="2"
+                                                cols="30" 
+                                                pInputTextarea 
+                                                formControlName="costFormula">
+                                            </textarea>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="role" class="block text-700 font-medium mb-2">Dimension 2</label>
+                                            <textarea 
+                                                rows="2"
+                                                cols="30" 
+                                                pInputTextarea 
+                                                formControlName="leadTimeFormula">
+                                            </textarea>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="role" class="block text-700 font-medium mb-2">Dimension 3</label>
+                                            <textarea 
+                                                rows="2"
+                                                cols="30" 
+                                                pInputTextarea 
+                                                formControlName="dimension3">
+                                            </textarea>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="role" class="block text-700 font-medium mb-2">Dimension 4</label>
+                                            <textarea 
+                                                rows="2"
+                                                cols="30" 
+                                                pInputTextarea 
+                                                formControlName="dimension4">
+                                            </textarea>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="role" class="block text-700 font-medium mb-2">Dimension 5</label>
+                                            <textarea 
+                                                rows="2"
+                                                cols="30" 
+                                                pInputTextarea 
+                                                formControlName="dimension5">
+                                            </textarea>
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="role" class="block text-700 font-medium mb-2">Labels</label>
+                                            <p-chips [(ngModel)]="labels" [ngModelOptions]="{ standalone: true }" >
+                                                <ng-template let-item pTemplate="item">
+                                                    {{ item }} - (active) <i class="pi pi-user ml-2"></i> 
+                                                </ng-template>
+                                            </p-chips>
+                                        </div>
+                                    </div>
+                                    <div class="flex  mb-5 gap-1 justify-content-end">
+                                        <p-button class="pull-right" label="Save" type="submit"  [raised]="true" severity="success" />                    
+                                        <p-button class="pull-right" label="Cancel" [text]="true" (click)="cancel()" [raised]="true" severity="secondary" />              
+                                    </div>
+                                </div>
+                            </form>
+                        </p-tabPanel>                        
+                            <p-tabPanel header="Custom Fields" class="line-height-3 m-0">
+                                <app-entity-node-type-custom-fields (newItemEvent)="addItem($event)" [isResetDone]="isResetDone"></app-entity-node-type-custom-fields>
+                            </p-tabPanel>
+                    </p-tabView>                    
+                </div>               
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,60 @@
+
+<div class="grid">
+    <div class="col-12">
+        <h4>Entity Details</h4>
+    </div>
+    <div class="col-12">
+        <p-toast/>
+        <form [formGroup]="productForm" (ngSubmit)="saveProduct()">
+            <div class="grid">
+                <div class="col-12 p-fluid">
+                    <label for="role" class="block text-700 font-medium mb-2">Product Type</label>
+                    <p-dropdown 
+                        formControlName="productType" appendTo="body" [filter]="true"  filterBy="name" 
+                        [showClear]="true" [options]="entityTypeList" optionLabel="name"
+                        placeholder="Select Field Type" autoWidth="false" class="w-100 w-full md:w-30rem" />
+                    <div *ngIf="submitted && f.productType.errors" class="invalid-feedback mb-1">
+                        <div *ngIf="f.productType.errors.required">Product Type is required</div>                   
+                    </div>
+                </div>
+                <div class="col-6 p-fluid">
+                    <label for="name" class="block text-700 font-medium mb-2">Product Name</label>                    
+                    <input id="name" type="text" placeholder="Field Name" pInputText 
+                        formControlName="productName"
+                        class="form-control"
+                        [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.productName.errors }"
+                        class="" style="padding:1rem">
+                    <div *ngIf="submitted && f.productName.errors" class="invalid-feedback mb-1">
+                        <div *ngIf="f.productName.errors.required">ProductName is required</div>                    
+                    </div>
+                </div>
+                <div class="col-6 p-fluid">
+                    <label for="name" class="block text-700 font-medium mb-2">Base Code</label>                    
+                    <input id="name" type="text" placeholder="Base Code" pInputText 
+                        formControlName="baseCode"
+                        class="form-control"                        
+                        class="" style="padding:1rem">                   
+                </div>
+                <div class="col-6 p-fluid">
+                    <label for="name" class="block text-700 font-medium mb-2">Description</label>                    
+                    <textarea 
+                    rows="5"
+                    cols="30" 
+                    pInputTextarea formControlName="description"></textarea> 
+                </div>
+                <div class="col-12 p-fluid">
+                    <label for="role" class="block text-700 font-medium mb-2">Labels</label>
+                    <p-chips [(ngModel)]="labels" [ngModelOptions]="{ standalone: true }" >
+                        <ng-template let-item pTemplate="item">
+                            {{ item }} - (active) <i class="pi pi-user ml-2"></i> 
+                        </ng-template>
+                    </p-chips>
+                </div>
+                <div class="col-12 justify-content-end">
+                    <p-button class="pull-right" label="Save" type="submit"  [raised]="true" severity="success" />                    
+                    <p-button class="pull-right" label="Cancel" [text]="true" (click)="cancel()" [raised]="true" severity="secondary" />              
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

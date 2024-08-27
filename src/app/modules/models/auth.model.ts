@@ -27,6 +27,10 @@ export const NewAuthInfo = (data: any): IAuthInfo => {
     payload: {
       email: data.email,
       roles:data.roles,
+      companyIds:data.companyIds,
+      selectedCompany:data.selectedCompany,
+      expiration:data.expiration,
+      companyName:data.companyName
     },
     token: data.token,
     //refreshToken: data.refreshToken,

@@ -65,7 +65,7 @@ export class UsersComponent {
   addEditCompany(request){
     this.ref = this.dialogService.open(AddUsersComponent,  {
       data: {user:request,companyList:this.companiesList},
-      header: 'Invite a User',
+      header: 'Invite user to your company',
       width: '50vw',
       modal:true,
       styleClass:'add-company',

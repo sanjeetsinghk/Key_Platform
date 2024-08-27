@@ -25,6 +25,13 @@ export class AppMenuComponent implements OnInit {
                 items: [
                     { label: 'Company', icon: 'pi pi-fw pi-id-card', routerLink: ['/company'] },
                     { label: 'Users', icon: 'pi pi-user', routerLink: ['/users'] },
+                    { label:'Products',
+                        items:[
+                           { label: 'Entity', icon: 'pi pi-fw pi-check-square', routerLink: ['/entity']},
+                           { label: 'Entity Type', icon: 'pi pi-fw pi-check-square', routerLink: ['/entitytype']},
+                           { label: 'Entity Node Type', icon: 'pi pi-fw pi-check-square', routerLink: ['/entitynodetype']}
+                        ]
+                    },
                     { label: 'Input', icon: 'pi pi-fw pi-check-square', routerLink: ['/uikit/input'] },
                     { label: 'Float Label', icon: 'pi pi-fw pi-bookmark', routerLink: ['/uikit/floatlabel'] },
                     { label: 'Invalid State', icon: 'pi pi-fw pi-exclamation-circle', routerLink: ['/uikit/invalidstate'] },

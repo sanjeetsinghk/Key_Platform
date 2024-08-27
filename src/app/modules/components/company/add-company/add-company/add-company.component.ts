@@ -68,7 +68,8 @@ export class AddCompanyComponent {
       isBlocked:data.isBlocked,
       description:data.description,
       countryCode:data.country ?data.country.code:'',
-      externalId:data.externalId
+      externalId:data.externalId,
+      isSelected:false
     }
     if(this.data){
       this.companyService.updateCompany([company]).subscribe((resp)=>{

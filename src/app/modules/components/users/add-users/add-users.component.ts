@@ -40,18 +40,28 @@ export class AddUsersComponent {
     this._countryService.getCountries().subscribe((resp)=>{
       console.log(resp);
       this.countries=resp;
+      let company="";
+      let role="";
+      if(this.data){
+        company=this.companyList.filter((x)=>x.code==this.data.companyId)[0];
+        role=this.roleTypeList.filter((x)=>x.code==this.data.roleId)[0];
+      }
       this.form = this.formBuilder.group(
         {
           id:[this.data?this.data.id:0],
-          company_name: [this.data?this.data.userName:'', [Validators.required]],  
+          company_name: [this.data?company:'', [Validators.required]],  
           user_email: [this.data?this.data.email:'', [Validators.required, Validators.email]],         
-          role:[this.data?this.data.roleName:null,[Validators.required]],
+          role:[this.data?role:null,[Validators.required]],
           externalId:[this.data?this.data.externalId:''],         
           isBlocked:[this.data?this.data.isBlocked:false]
         });
-        this.isLoaded=true;
+      this.isLoaded=true;
+      if(this.data){
+        this.form.get('company_name').disable();
+        this.form.get('role').disable(); 
+      }
     })
-      
+   
   }
   get f(): { [key: string]: AbstractControl } {
       return this.form.controls;

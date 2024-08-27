@@ -5,7 +5,7 @@
             <div class="px-1 py-1 mb-2">
                 <h3 class="m-0">Manage Company</h3>
             </div>
-            <p-toast></p-toast>
+            <p-toast/>
             <p-toolbar styleClass="mb-4">
                 <ng-template pTemplate="left">
                     <div class="my-2">
@@ -50,11 +50,11 @@
                         </td>
                         <td style="width:14%; min-width:10rem;">
                             <span class="p-column-title">Id</span>
-                            {{rowIndex+1}}
+                            {{rowIndex+1}}  <i *ngIf="product.companyUsers && product.companyUsers[0].isSelected" class="pi pi-home ml-2" severity="success"></i>
                         </td>
                         <td style="width:14%; min-width:10rem;">
                             <span class="p-column-title">Name</span>
-                            {{product.name}}
+                            <a (click)="defaultSelection(product)"> {{product.name}}</a>
                         </td>
                         <td style="width:14%; min-width:10rem;">
                             <span class="p-column-title">Is Blocked</span>
@@ -108,6 +108,16 @@
             <ng-template pTemplate="footer">
                 <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteProductDialog = false"></button>
                 <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDelete()"></button>
+            </ng-template>
+        </p-dialog>
+        <p-dialog [(visible)]="selectedCompanyDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span>Are you sure you want to switch to this company <strong>{{selectedCompany?.name}}</strong> ?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="selectedCompanyDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmSelected()"></button>
             </ng-template>
         </p-dialog>
     </div>
