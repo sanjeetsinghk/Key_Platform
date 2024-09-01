@@ -1,6 +1,5 @@
-import { IEntityInfoDetails } from "./entity-info-details.model";
-
-export interface EntityInfoModel{
+import { EntityInfoModel } from "./entity-info.model";
+export interface IEntityListModel{
     id:number;
     companyId:number;
     entityTypeId:string;
@@ -11,5 +10,5 @@ export interface EntityInfoModel{
     labels?:string;
     userid:number;
     isBlocked:boolean;
-    entityInfoDetailsList?:IEntityInfoDetails[]
+    entityTypeName:string;
 }

@@ -30,6 +30,9 @@ import { EntityComponent } from './entity.component';
 import { EntityTreeComponent } from '../entity-tree/entity-tree.component';
 import { EntityRoutingModule } from './entity-routing.module';
 import { ProductInfoComponent } from '../product-info/product-info.component';
+import { TreeModule } from 'primeng/tree';
+import { TreeTableModule } from 'primeng/treetable';
+import { EntityListComponent } from '../entity-list/entity-list.component';
 
 
 
@@ -67,8 +70,10 @@ import { ProductInfoComponent } from '../product-info/product-info.component';
         DividerModule,
         TabViewModule,
         PanelModule,
-        EntityRoutingModule
+        EntityRoutingModule,
+        TreeModule,
+		TreeTableModule
     ],
-    declarations: [EntityComponent,EntityTreeComponent,ProductInfoComponent]
+    declarations: [EntityComponent,EntityTreeComponent,ProductInfoComponent,EntityListComponent]
 })
 export class EntityModule { }

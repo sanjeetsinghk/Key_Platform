@@ -11,7 +11,7 @@
                     <label for="role" class="block text-700 font-medium mb-2">Product Type</label>
                     <p-dropdown 
                         formControlName="productType" appendTo="body" [filter]="true"  filterBy="name" 
-                        [showClear]="true" [options]="entityTypeList" optionLabel="name"
+                        [showClear]="true" [options]="entityTypeList" optionLabel="name" (onChange)="onEntityTypeSelect($event.value)"
                         placeholder="Select Field Type" autoWidth="false" class="w-100 w-full md:w-30rem" />
                     <div *ngIf="submitted && f.productType.errors" class="invalid-feedback mb-1">
                         <div *ngIf="f.productType.errors.required">Product Type is required</div>                   
@@ -49,6 +49,51 @@
                             {{ item }} - (active) <i class="pi pi-user ml-2"></i> 
                         </ng-template>
                     </p-chips>
+                </div>
+                <div class="col-12 p-fluid">
+                    <ng-container formArrayName="groupArr">
+                        <ng-container *ngFor="let item of groupArrList().controls; let groupIndex = index">
+                            <div class="grid mt-1" [formGroupName]="groupIndex">
+                                <div class="col-12 align-items-center justify-content-center p-1">  
+                                    <h4>{{item.value.name}}</h4> 
+                                </div>
+                                <ng-container formArrayName="groupArrItems">
+                                    <ng-container *ngFor="let arrItem of groupArrItemsList(groupIndex).controls; let arrIndex = index">
+                                        <ng-container [formGroupName]="arrIndex">
+                                            <div class="col-4">
+                                                <label for="selectedValue">{{arrItem.value.fieldName}}</label>
+                                                <ng-container *ngIf="arrItem.value.elementType=='Text'">
+                                                    <input *ngIf="arrItem.value.attributeType=='Required'" type="text" id="selectedValue" pInputText formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                    <p-inputNumber *ngIf="arrItem.value.attributeType=='Range'"  [min]="arrItem.value.attributeValues.min" [max]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                    <small id="username-help" *ngIf="arrItem.value.attributeType=='Range'">
+                                                       Range should be selected in between {{arrItem.value.attributeValues.min}} to {{arrItem.value.attributeValues.max}}
+                                                    </small>
+                                                    <p-dropdown 
+                                                        *ngIf="arrItem.value.attributeType=='DropDown'"
+                                                        formControlName="selectedValue" appendTo="body" [filter]="true"  filterBy="name" 
+                                                        [showClear]="true" [options]="arrItem.value.attributeValues" optionLabel="name"
+                                                        placeholder="Select Option" autoWidth="false" class="w-100 w-full md:w-30rem" />
+                                                </ng-container>
+                                                <ng-container *ngIf="arrItem.value.elementType=='Number'">
+                                                    <input type="number" *ngIf="arrItem.value.attributeType=='Required'" id="selectedValue" pInputText formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                    <p-inputNumber *ngIf="arrItem.value.attributeType=='Range'"  [min]="arrItem.value.attributeValues.min" [max]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                    <small id="username-help" *ngIf="arrItem.value.attributeType=='Range'">
+                                                       Range should be selected in between {{arrItem.value.attributeValues.min}} to {{arrItem.value.attributeValues.max}}
+                                                    </small>
+                                                    <p-dropdown 
+                                                    *ngIf="arrItem.value.attributeType=='DropDown'"
+                                                    formControlName="selectedValue" appendTo="body" [filter]="true"  filterBy="name" 
+                                                    [showClear]="true" [options]="arrItem.value.attributeValues" optionLabel="name"
+                                                    placeholder="Select Option" autoWidth="false" class="w-100 w-full md:w-30rem" />
+                                                </ng-container>
+                                            </div>
+                                        </ng-container>
+                                        
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
                 </div>
                 <div class="col-12 justify-content-end">
                     <p-button class="pull-right" label="Save" type="submit"  [raised]="true" severity="success" />                    
