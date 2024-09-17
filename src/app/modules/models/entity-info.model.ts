@@ -6,6 +6,11 @@ export interface EntityInfoModel{
     entityTypeId:string;
     name:string;
     description?:string;
+    defaultCostFormula?:string;
+    defaultLeadTimeFormula?:string;
+    dimension3?:string;
+    dimension4?:string;
+    dimension5?:string;
     baseCode?:string;
     identificationCode?:string;
     labels?:string;

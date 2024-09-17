@@ -33,6 +33,10 @@ import { ProductInfoComponent } from '../product-info/product-info.component';
 import { TreeModule } from 'primeng/tree';
 import { TreeTableModule } from 'primeng/treetable';
 import { EntityListComponent } from '../entity-list/entity-list.component';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { CardModule } from 'primeng/card';
+import { EntityPerformanceIndicatorComponent } from '../entity-performance-indicator/entity-performance-indicator.component';
 
 
 
@@ -72,8 +76,14 @@ import { EntityListComponent } from '../entity-list/entity-list.component';
         PanelModule,
         EntityRoutingModule,
         TreeModule,
-		TreeTableModule
+		TreeTableModule,
+        InputGroupModule,
+        AutoCompleteModule,
+        CardModule
     ],
-    declarations: [EntityComponent,EntityTreeComponent,ProductInfoComponent,EntityListComponent]
+    declarations: [EntityComponent,EntityTreeComponent,
+        ProductInfoComponent,
+        EntityListComponent,
+        EntityPerformanceIndicatorComponent]
 })
 export class EntityModule { }

@@ -10,9 +10,10 @@
                 <app-product-info [entityTypeList]="entityTypeList" [selectedProduct]="selectedProduct" (savedProductEvent)="onSavedProduct($event)"></app-product-info>
             </p-tabPanel>
             <p-tabPanel header="Entity Tree" class="line-height-3 m-0 w-full">
-                <app-entity-tree [entityNodeTypeList]="entityNodeTypeList" [selectedProduct]="selectedProduct"></app-entity-tree>
+                <app-entity-tree [entityNodeTypeList]="entityNodeTypeList" [selectedProduct]="selectedProduct" (onSavedEntityTreeEvent)="onSavedEntityTreeEvent($event)"></app-entity-tree>
             </p-tabPanel>
             <p-tabPanel header="Performance" class="line-height-3 m-0 w-full">
+                <app-entity-performance-indicator [entityTreeData]="entityTreeData"></app-entity-performance-indicator>
             </p-tabPanel>
             <p-tabPanel header="Scenario" class="line-height-3 m-0 w-full">
             </p-tabPanel>

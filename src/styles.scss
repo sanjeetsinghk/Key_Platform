@@ -49,3 +49,17 @@ $gutter: 1rem; //for primeflex grid system
       opacity: 0;
     }
   }
+  .dimension{
+    .p-autocomplete .p-autocomplete-multiple-container .p-autocomplete-token {
+     padding: 0!important; 
+    background:none!important;
+     color: black!important; 
+     border-radius: 0px!important; 
+    }
+    .p-autocomplete-token-icon{
+      display: none;
+    }
+}
+.w-50{
+  width: 50%;
+}

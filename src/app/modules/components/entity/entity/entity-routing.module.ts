@@ -9,6 +9,9 @@ import { EntityListComponent } from '../entity-list/entity-list.component';
             path: '', component: EntityListComponent, 
         },
         {
+            path:'details',pathMatch:"full",component: EntityComponent
+        },
+        {
             path:'details/:id',pathMatch:"full",component: EntityComponent
         }
     ])],

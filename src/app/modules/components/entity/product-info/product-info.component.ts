@@ -111,10 +111,11 @@ export class ProductInfoComponent {
       formArray.removeAt(0)
     }
   }
+  fields:any[]=[]
   onEntityTypeSelect(event:IEntityTypeModel){
     //this.productForm.reset();
     this.groupArrList().clear();
-    
+    this.fields=[];
     const orderPriority = event.entityCustomFields
       .map(o => o.groupName)
       .reduce((map, category, idx) => {
@@ -136,7 +137,8 @@ export class ProductInfoComponent {
     unique.forEach((item,index)=>{
       this.addGroupArrList(item);
       let items=sortedArray.filter((x:any)=>x.groupName==item);
-      items.forEach((x)=>{
+      items.forEach((x:any)=>{
+        this.fields.push(x.fieldName);
         this.addGroupArrItemsList(x,index);
       });
     });
@@ -155,7 +157,7 @@ export class ProductInfoComponent {
       value.groupArr.forEach((x)=>{
         x.groupArrItems.forEach((item)=>{
           groupArrItems.push({
-            id:x.id || 0,
+            id:this.selectedProduct ?item.id : 0,
             entityTypeFieldId:item.entityTypeFieldId,
             entityTypeId:item.entityTypeId,
             productInfoId:value.id,
@@ -178,6 +180,11 @@ export class ProductInfoComponent {
         name:value.productName,
         labels:this.labels?this.labels.join(","):'',
         description:value.description,
+        defaultCostFormula:value?.defaultCostFormula,
+        defaultLeadTimeFormula:value?.defaultLeadTimeFormula,
+        dimension3:value?.dimension3,
+        dimension4:value?.dimension4,
+        dimension5:value?.dimension5,
         baseCode:value.baseCode,
         entityTypeId:value.productType.id,
         isBlocked:false,

@@ -1,0 +1,75 @@
+<div class="grid p-fluid">
+    <div class="col-12">
+        <p-tree [value]="files" layout="horizontal" 
+        selectionMode="single" [(selection)]="selectedFiles3"  (onNodeSelect)="nodeSelect($event)" >
+        <ng-template let-node pTemplate="default">
+            <b>{{node.data.qty}} {{ node.label }}</b><br/>
+            {{node.data.customlabel}}<br/>
+            <label>Total Cost: {{node.data.totalValue}}</label>
+        </ng-template>
+        </p-tree>
+    </div>
+    <form [formGroup]="productForm" (ngSubmit)="saveProduct()" class="w-full">
+        <div class="col-12">        
+            <p-panel header="Performance Indicator">            
+                <ng-container formArrayName="groupArr">
+                    <table class="w-full text-left">
+                        <tr class="justify-content-center">
+                            <th>Name</th><th>Result</th>
+                            <th>Precision </th>
+                            <th>
+                                <p-button  [pTooltip]="tooltipContent" tooltipPosition="top" label="Show Suggestion List" [link]="true" class="ml-3" />
+                                <ng-template #tooltipContent>
+                                    <div class="text-left">
+                                        
+                                        <ul *ngFor="let item of fields" >
+                                            <li style="list-style-type: square;" class="mr-4 text-left">{{item.label}}</li>
+                                        </ul>
+                                    </div>
+                                </ng-template>
+                            </th>
+                            <th><p-button icon="pi pi-plus" title="Add New KPI's" severity="success" (click)="addNewMetrics()" /></th>
+                        </tr>
+                
+                        <ng-container *ngFor="let item of groupArrList().controls; let groupIndex = index">
+                            <ng-container [formGroupName]="groupIndex">
+                                <tr class="justify-content-center mt-3">
+                                    <td><input type="text" pInputText class="w-50" formControlName="customName"/></td><td><strong>{{item.value.itemValue}}</strong></td>
+                                    <td><input type="text" pInputText class="w-50" formControlName="precesion"/></td><td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="dimension">
+                                        <p-autoComplete 
+                                        formControlName="calculation"
+                                        [suggestions]="suggestionList"
+                                        (completeMethod)="search($event)"
+                                        placeholder="Enter something to search"
+                                        field="label"
+                                        aria-describedby="username-help" 
+                                        [multiple]="true"/>
+                                        <small id="username-help">
+                                            Calculated Values : {{item.value.value}} <br/>
+                                            Node Fields are :
+                                            <ng-container *ngFor="let item of getSelectedNodesList(item.value.calculation)">
+                                                <small>  {{item?.key}} {{item?.value}} |</small>
+                                                
+                                            </ng-container>
+                                        </small>
+                                    </td>
+                                </tr>
+                            </ng-container>                    
+                        </ng-container>
+                    </table>
+                </ng-container>            
+            </p-panel>    
+        </div>
+        <div class="grid p-fluid" >
+            <div class="col-2 justify-content-start">
+                <p-button class="pull-right" label="Save" type="submit"  [raised]="true" severity="success" />                                                
+            </div>
+            <div class="col-2 justify-content-start">                            
+                <p-button class="pull-right" label="Cancel" [text]="true" (click)="cancel()" [raised]="true" severity="secondary" />              
+            </div>
+        </div>
+    </form>
+</div>

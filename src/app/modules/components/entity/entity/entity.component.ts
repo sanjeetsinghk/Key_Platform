@@ -4,6 +4,7 @@ import { ISelectedCompanyDto } from 'src/app/modules/models/company-selection.mo
 
 import { EntityInfoModel } from 'src/app/modules/models/entity-info.model';
 import { IEntityNodeTypeModel } from 'src/app/modules/models/entity-node-type.model';
+import { EntityTreeModel } from 'src/app/modules/models/entity-tree.model';
 import { IEntityTypeModel } from 'src/app/modules/models/entity-type.model';
 import { AuthService } from 'src/app/modules/service/auth.service';
 import { EntityInfoService } from 'src/app/modules/service/entity-info.service';
@@ -20,15 +21,13 @@ export class EntityComponent {
   selectedProduct:EntityInfoModel;
   entityId:number;
   entityTypeList:IEntityTypeModel[];
+  entityTreeData:EntityTreeModel;
   constructor(private entityTypeService:EntityTypeService,private authService:AuthService,private entityNodeTypeService:EntityNodeTypeService,private entityInfoService:EntityInfoService,private router:Router,private activeRouter:ActivatedRoute){
     this.activeRouter.params.subscribe(result =>
       {          
         this.entityId=result["id"];
         console.log(this.entityId)
-        if(!isNaN(this.entityId)){
-          this.getEntityTypes();
-          
-        }
+        this.getEntityTypes();
         let data:ISelectedCompanyDto={
           CompanyId:this.authService.getSelectedCompany(),
           UserId:this.authService.getUserId()
@@ -66,5 +65,8 @@ export class EntityComponent {
   }
   onSavedProduct(event:EntityInfoModel){
     this.selectedProduct=event;
+  }
+  onSavedEntityTreeEvent(data:EntityTreeModel){
+    this.entityTreeData=data;
   }
 }
