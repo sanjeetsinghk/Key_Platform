@@ -1,6 +1,6 @@
 import { IEntityInfoDetails } from "./entity-info-details.model";
 
-export interface EntityInfoModel{
+export interface ScenarioInfoModel{
     id:number;
     companyId:number;
     entityTypeId:string;
@@ -17,5 +17,5 @@ export interface EntityInfoModel{
     userid:number;
     isBlocked:boolean;
     allowProductCloning:boolean;
-    entityInfoDetailsList?:IEntityInfoDetails[]
+    scenarioInfoDetailsList?:IEntityInfoDetails[]
 }

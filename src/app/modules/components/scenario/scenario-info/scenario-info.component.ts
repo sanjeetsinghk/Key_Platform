@@ -4,26 +4,31 @@ import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { ISelectedCompanyDto } from 'src/app/modules/models/company-selection.model';
 import { IEntityInfoDetails } from 'src/app/modules/models/entity-info-details.model';
-import { EntityInfoModel } from 'src/app/modules/models/entity-info.model';
 import { IEntityTypeModel } from 'src/app/modules/models/entity-type.model';
+import { ScenarioInfoModel } from 'src/app/modules/models/scenario-info.mode';
 import { AuthService } from 'src/app/modules/service/auth.service';
 import { EntityInfoService } from 'src/app/modules/service/entity-info.service';
-import { EntityTypeService } from 'src/app/modules/service/entity-type.service';
+import { ScenarioService } from 'src/app/modules/service/scenario.service';
 import { Utility } from 'src/app/modules/utility/utility';
 
 @Component({
-  selector: 'app-product-info',
-  templateUrl: './product-info.component.html',
-  styleUrl: './product-info.component.scss',
+  selector: 'app-scenario-info',
+  templateUrl: './scenario-info.component.html',
+  styleUrl: './scenario-info.component.scss',
   providers:[DialogService,MessageService]
 })
-export class ProductInfoComponent {
+export class ScenarioInfoComponent {
   productForm:FormGroup;
   productFormArr:FormGroup;
   @Input() entityTypeList:IEntityTypeModel[];
-  @Output() savedProductEvent = new EventEmitter<EntityInfoModel>();
-  @Input() selectedProduct:EntityInfoModel;
-  constructor(private cdr:ChangeDetectorRef,private utility:Utility,private authService:AuthService,private entityInfoService:EntityInfoService,private entityTypeService:EntityTypeService,private formBuilder: FormBuilder){
+  @Output() savedProductEvent = new EventEmitter<ScenarioInfoModel>();
+  @Input() selectedProduct:ScenarioInfoModel;
+  constructor(
+    private cdr:ChangeDetectorRef,
+    private utility:Utility,
+    private authService:AuthService,
+    private entityInfoService:ScenarioService,    
+    private formBuilder: FormBuilder){
     
   }
   labels:any;
@@ -33,7 +38,7 @@ export class ProductInfoComponent {
    this.bindEntityForm(null);
    
   }
-  bindEntityForm(data:EntityInfoModel){
+  bindEntityForm(data:ScenarioInfoModel){
     let entityType;
     if(data && data!=null)
       entityType=this.entityTypeList.filter((x)=>x.id==parseInt(data.entityTypeId))[0]
@@ -43,11 +48,11 @@ export class ProductInfoComponent {
       productName:[data?.name,[Validators.required]],
       baseCode:[data?.baseCode],
       description:[data?.description],
-      allowProductCloning:[ data !=null ? data?.allowProductCloning: true],
+      allowProductCloning:[data !=null ? data?.allowProductCloning:true],
       groupArr:this.formBuilder.array([])
     })
     if(data && data!=null){
-      const orderPriority = data.entityInfoDetailsList
+      const orderPriority = data.scenarioInfoDetailsList
       .map(o => o.groupName)
       .reduce((map, category, idx) => {
         if (map[category] == null) {
@@ -55,7 +60,7 @@ export class ProductInfoComponent {
         }
         return map;
       }, {}); 
-      let sortedArray=  data.entityInfoDetailsList.sort((a, b) => orderPriority[a.groupName] - orderPriority[b.groupName]);
+      let sortedArray=  data.scenarioInfoDetailsList.sort((a, b) => orderPriority[a.groupName] - orderPriority[b.groupName]);
       this.sortingArrangements(sortedArray);
     }
   }
@@ -174,7 +179,7 @@ export class ProductInfoComponent {
           })
         })
       });
-      let data:EntityInfoModel={
+      let data:ScenarioInfoModel={
         id:value.id ||0,
         companyId:this.authService.getSelectedCompany(),
         userid:this.authService.getUserId(),
@@ -190,23 +195,16 @@ export class ProductInfoComponent {
         entityTypeId:value.productType.id,
         isBlocked:false,
         allowProductCloning:value.allowProductCloning,
-        entityInfoDetailsList:groupArrItems
+        scenarioInfoDetailsList:groupArrItems
       }
       if(this.selectedProduct){
-        this.entityInfoService.updateEntityType(data).subscribe({
+        this.entityInfoService.updateScenarioType(data).subscribe({
           next:(resp)=>{
               this.savedProductEvent.emit(resp.resultData)
           }
         })
       }
-      else
-      {
-        this.entityInfoService.saveEntityType(data).subscribe({
-          next:(resp)=>{
-              this.savedProductEvent.emit(resp.resultData)
-          }
-        })
-      }
+      
       console.log(data);
     }
   }

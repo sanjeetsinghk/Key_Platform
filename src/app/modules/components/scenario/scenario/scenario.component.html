@@ -1,0 +1,20 @@
+<p-toast 
+    [showTransformOptions]="'translateY(100%)'" 
+    [showTransitionOptions]="'1000ms'" 
+    [hideTransitionOptions]="'1000ms'" 
+    [showTransformOptions]="'translateX(100%)'" />
+<div class="grid">
+    <div class="ml-1 col-12 flex card">
+        <p-tabView orientation="left" class="w-full">
+            <p-tabPanel header="Scenario Info" class="line-height-3 m-0 w-full">
+                <app-scenario-info [entityTypeList]="entityTypeList" [selectedProduct]="selectedProduct" (savedProductEvent)="onSavedProduct($event)"></app-scenario-info>
+            </p-tabPanel>
+            <p-tabPanel header="Scenario Tree" class="line-height-3 m-0 w-full">
+                <app-scenario-tree [entityNodeTypeList]="entityNodeTypeList" [selectedProduct]="selectedProduct" (onSavedEntityTreeEvent)="onSavedEntityTreeEvent($event)"></app-scenario-tree>
+            </p-tabPanel>
+            <p-tabPanel header="Performance" class="line-height-3 m-0 w-full">
+                <app-scenario-performance-indicator [entityTreeData]="entityTreeData"></app-scenario-performance-indicator>
+            </p-tabPanel>           
+        </p-tabView>
+    </div>
+</div>

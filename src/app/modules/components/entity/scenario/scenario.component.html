@@ -1,0 +1,75 @@
+<div class="grid p-fluid">
+    <p-toast/>
+    <p-card header="Scenarios" class="w-full">
+        <div class="grid p-fluid">
+            <div class="col-4">
+                <input type="text" placeholder="Enter Code" [(ngModel)]="Code" pInputText />
+            </div>
+            <div class="col-3">
+                <p-button class="pull-right w-50" label="Create Scenario" type="button" (click)="saveScenario()"  [raised]="true" severity="success" />                                                
+            </div>
+        </div>
+    </p-card>
+    <p-card header="Scenarios List" class="w-full">
+        <div class="grid p-fluid">
+            <p-table class="w-full" #dt [value]="entityList" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['type','fields','description']" [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [(selection)]="selectedProducts" selectionMode="multiple" [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                       
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."  class="w-full sm:w-auto"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        <th pSortableColumn="code">Code <p-sortIcon field="code"></p-sortIcon></th>
+                        <th pSortableColumn="productName">Product <p-sortIcon field="productName"></p-sortIcon></th>
+                        <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+                        <th pSortableColumn="sP_status">SP Status <p-sortIcon field="sP_status"></p-sortIcon></th>
+                        <th pSortableColumn="labels">Labels <p-sortIcon field="labels"></p-sortIcon></th>                        
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-product let-rowIndex="rowIndex">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="product"></p-tableCheckbox>
+                        </td>
+                       
+                        <td class="p-0">
+                            <span class="p-column-title">Code</span>
+                            <p-button [label]="product.code" (click)="onScenarioDetails(product)" [link]="true" />
+                        </td>
+                        <td class="p-0">
+                            <span class="p-column-title">Product</span>
+                            <p-button [label]="product.productName" [link]="true" (click)="onEntityDetails(product)" />                            
+                        </td>
+                        <td>
+                            <span class="p-column-title">Status</span>
+                            {{product.status}}
+                        </td>
+                        <td>
+                            <span class="p-column-title">SP Status</span>
+                            {{product.sP_Status}}
+                        </td>
+                        <td>
+                            <span class="p-column-title">Labels</span>
+                            {{product.labels}}
+                        </td>
+                        
+                        <td>
+                            <!-- <div class="flex">
+                                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editProduct(product)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteProduct(product)"></button>
+                            </div> -->
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-card>
+</div>

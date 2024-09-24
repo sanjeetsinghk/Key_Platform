@@ -3,20 +3,20 @@ import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
-import { CloneDetails } from 'src/app/modules/models/cloneDetails.model';
 import { ISelectedCompanyDto } from 'src/app/modules/models/company-selection.model';
 import { IEntityListModel } from 'src/app/modules/models/entity-list.model';
 
 import { AuthService } from 'src/app/modules/service/auth.service';
 import { EntityInfoService } from 'src/app/modules/service/entity-info.service';
+import { ScenarioService } from 'src/app/modules/service/scenario.service';
 
 @Component({
-  selector: 'app-entity-list', 
-  templateUrl: './entity-list.component.html',
-  styleUrl: './entity-list.component.scss',
+  selector: 'app-scenario-list', 
+  templateUrl: './scenario-list.component.html',
+  styleUrl: './scenario-list.component.scss',
   providers:[DialogService,MessageService]
 })
-export class EntityListComponent {
+export class ScenarioListComponent {
   productDialog: boolean = false;
   
   deleteProductDialog: boolean = false;
@@ -41,13 +41,13 @@ export class EntityListComponent {
     
   constructor(private router:Router,public dialogService: DialogService,
      private messageService: MessageService,
-     private entityService:EntityInfoService,private authService:AuthService) { }
+     private entityService:ScenarioService,private authService:AuthService) { }
 
   ngOnInit() {
     this.cols = [
         { field: 'id', header: 'Id' },
-        { field: 'name', header: 'Name' },
-        { field: 'entityTypeName', header: 'Type' },
+        { field: 'code', header: 'Code' },
+        { field: 'productName', header: 'Entity Name' },
         { field: 'labels', header: 'Labels' },
         { field: 'isBlocked', header: 'State' },
     ];
@@ -61,12 +61,12 @@ export class EntityListComponent {
       CompanyId:this.authService.getSelectedCompany(),
       UserId:this.authService.getUserId()
     }
-    this.entityService.getEntityList().subscribe(data => this.entityList = data.resultData);
+    this.entityService.getScenarioList().subscribe(data => this.entityList = data.resultData);
   }
  
   openNew() {
    
-    this.router.navigate(['entity/details']);
+    this.router.navigate(['scenario/details']);
   }
   addEditCompany(request){
   }
@@ -74,10 +74,10 @@ export class EntityListComponent {
       this.deleteProductsDialog = true;
   }
 
-  editProduct(product: IEntityListModel) {
+  editProduct(product: any) {
       this.product = { ...product };      
       
-      this.router.navigate(['entity/details/'+product.id]);
+      this.router.navigate(['scenario/details/'+product.entityId]);
       console.log(this.product)
     
   }
@@ -126,13 +126,12 @@ export class EntityListComponent {
     //   this.getEntities();
     // })
   }
-  cloneEntity(product:any){
+  onScenarioDetails(product:any){
+    this.router.navigate(['scenario/details/'+product.entityId]);
     console.log(product)
-    let data:CloneDetails={
-      id:product.id
-    }
-    this.entityService.cloneEntity(data).subscribe({
-
-    })
+  }
+  onEntityDetails(product:any){
+    this.router.navigate(['entity/details/'+product.referenceId]);
+    console.log(product)
   }
 }

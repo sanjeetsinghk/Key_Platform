@@ -26,18 +26,20 @@ import { ChipsModule } from 'primeng/chips';
 import { DividerModule } from 'primeng/divider';
 import { TabViewModule } from 'primeng/tabview';
 import { PanelModule } from 'primeng/panel';
-import { EntityComponent } from './entity.component';
-import { EntityTreeComponent } from '../entity-tree/entity-tree.component';
-import { EntityRoutingModule } from './entity-routing.module';
-import { ProductInfoComponent } from '../product-info/product-info.component';
+
 import { TreeModule } from 'primeng/tree';
 import { TreeTableModule } from 'primeng/treetable';
-import { EntityListComponent } from '../entity-list/entity-list.component';
+
 import { InputGroupModule } from 'primeng/inputgroup';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { CardModule } from 'primeng/card';
-import { EntityPerformanceIndicatorComponent } from '../entity-performance-indicator/entity-performance-indicator.component';
+
 import { ScenarioComponent } from '../scenario/scenario.component';
+import { ScenarioRoutingModule } from './scenario-routing.module';
+import { ScenarioTreeComponent } from '../scenario-tree/scenario-tree.component';
+import { ScenarioInfoComponent } from '../scenario-info/scenario-info.component';
+import { ScenarioListComponent } from '../scenario-list/scenario-list.component';
+import { ScenarioPerformanceIndicatorComponent } from '../scenario-performance-indicator/scenario-performance-indicator.component';
 
 
 
@@ -75,18 +77,18 @@ import { ScenarioComponent } from '../scenario/scenario.component';
         DividerModule,
         TabViewModule,
         PanelModule,
-        EntityRoutingModule,
+        ScenarioRoutingModule,
         TreeModule,
 		TreeTableModule,
         InputGroupModule,
         AutoCompleteModule,
         CardModule
     ],
-    declarations: [EntityComponent,EntityTreeComponent,
-        ProductInfoComponent,
-        EntityListComponent,
-        EntityPerformanceIndicatorComponent,
+    declarations: [ScenarioComponent,ScenarioTreeComponent,
+        ScenarioInfoComponent,
+        ScenarioListComponent,
+        ScenarioPerformanceIndicatorComponent,
         ScenarioComponent
     ]
 })
-export class EntityModule { }
+export class ScenarioModule { }

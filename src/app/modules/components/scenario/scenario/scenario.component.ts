@@ -10,19 +10,25 @@ import { AuthService } from 'src/app/modules/service/auth.service';
 import { EntityInfoService } from 'src/app/modules/service/entity-info.service';
 import { EntityNodeTypeService } from 'src/app/modules/service/entity-node-type.service';
 import { EntityTypeService } from 'src/app/modules/service/entity-type.service';
+import { ScenarioService } from 'src/app/modules/service/scenario.service';
 
 @Component({
-  selector: 'app-entity', 
-  templateUrl: './entity.component.html',
-  styleUrl: './entity.component.scss'
+  selector: 'app-scenario', 
+  templateUrl: './scenario.component.html',
+  styleUrl: './scenario.component.scss'
 })
-export class EntityComponent {
+export class ScenarioComponent {
  entityNodeTypeList:IEntityNodeTypeModel[];
   selectedProduct:EntityInfoModel;
   entityId:number;
   entityTypeList:IEntityTypeModel[];
   entityTreeData:EntityTreeModel;
-  constructor(private entityTypeService:EntityTypeService,private authService:AuthService,private entityNodeTypeService:EntityNodeTypeService,private entityInfoService:EntityInfoService,private router:Router,private activeRouter:ActivatedRoute){
+  constructor(
+    private entityTypeService:EntityTypeService,
+    private authService:AuthService,
+    private entityNodeTypeService:EntityNodeTypeService,
+    private entityInfoService:ScenarioService,
+    private router:Router,private activeRouter:ActivatedRoute){
     this.activeRouter.params.subscribe(result =>
       {          
         this.entityId=result["id"];

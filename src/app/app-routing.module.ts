@@ -16,11 +16,7 @@ import { AuthGuard } from './modules/service/auth.guard';
                     { path: 'entity',canActivate: [AuthGuard], loadChildren: () => import('./modules/components/entity/entity/entity.module').then(m =>m.EntityModule) },
                     { path: 'entitytype',canActivate: [AuthGuard], loadChildren: () => import('./modules/components/entity-type/entity-type.module').then(m => m.EntityTypeModule) },
                     { path: 'entitynodetype',canActivate: [AuthGuard], loadChildren: () => import('./modules/components/entity-node-type/entity-node-type.module').then(m => m.EntityNodeTypeModule) },
-                    { path: 'uikit', loadChildren: () => import('./modules/components/uikit/uikit.module').then(m => m.UIkitModule) },
-                    { path: 'utilities', loadChildren: () => import('./modules/components/utilities/utilities.module').then(m => m.UtilitiesModule) },
-                    { path: 'documentation', loadChildren: () => import('./modules/components/documentation/documentation.module').then(m => m.DocumentationModule) },
-                    { path: 'blocks', loadChildren: () => import('./modules/components/primeblocks/primeblocks.module').then(m => m.PrimeBlocksModule) },
-                    { path: 'pages', loadChildren: () => import('./modules/components/pages/pages.module').then(m => m.PagesModule) }
+                    { path: 'scenario',canActivate: [AuthGuard], loadChildren: () => import('./modules/components/scenario/scenario/scenario.module').then(m =>m.ScenarioModule) },
                 ]
             },
             { path: 'auth', loadChildren: () => import('./modules/components/auth/auth.module').then(m => m.AuthModule) },

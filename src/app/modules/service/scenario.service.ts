@@ -5,16 +5,16 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 import { LocalStorageService } from './local-storage.service';
 import { EntityInfoModel } from '../models/entity-info.model';
 import { EntityTreeModel } from '../models/entity-tree.model';
-import { CloneDetails } from '../models/cloneDetails.model';
+import { ScenarioDto } from '../models/scenarioDto';
 
 @Injectable({
     providedIn:'root'
 })
-export class EntityInfoService {
+export class ScenarioService {
     constructor(private http: HttpClient,private localStorageService:LocalStorageService) { }
     
-    saveEntityType(data:EntityInfoModel):Observable<any>{
-        return this.http.post(environment.apiurl+'entity/saveEntity',data).pipe(
+    saveScenario(data:ScenarioDto):Observable<any>{
+        return this.http.post(environment.apiurl+'scenario/saveScenario',data).pipe(
             map((response) => {
               // prepare the response to be handled, then return
              return response;
@@ -26,21 +26,9 @@ export class EntityInfoService {
             })
           );
     }
-    cloneEntity(data:CloneDetails):Observable<any>{
-      return this.http.post(environment.apiurl+'entity/cloneEntity',data).pipe(
-          map((response) => {
-            // prepare the response to be handled, then return
-           return response;
-          }),
-          // if we are setting cookie on server, this is the place to call local server
-          //switchMap((user) => this.SetLocalSession(user)),
-          catchError((error)=>{
-            return throwError(error || 'server error.')
-          })
-        );
-  }
-    updateEntityType(data:EntityInfoModel):Observable<any>{
-        return this.http.post(environment.apiurl+'entity/updateEntity',data).pipe(
+    
+    updateScenarioType(data:EntityInfoModel):Observable<any>{
+        return this.http.post(environment.apiurl+'scenario/updateScenario',data).pipe(
             map((response) => {
               // prepare the response to be handled, then return
              return response;
@@ -53,7 +41,7 @@ export class EntityInfoService {
           );
     }
     getEntityInfo(id:number):Observable<any>{
-        return this.http.get(environment.apiurl+'entity/getEntity?id='+id).pipe(
+        return this.http.get(environment.apiurl+'scenario/getScenarioById?id='+id).pipe(
             map((response) => {
               // prepare the response to be handled, then return
              return response;
@@ -65,8 +53,8 @@ export class EntityInfoService {
             })
           );
     }
-    getEntityList():Observable<any>{
-        return this.http.get(environment.apiurl+'entity/getEntityList').pipe(
+    getScenarioList():Observable<any>{
+        return this.http.get(environment.apiurl+'scenario/getScenarioList').pipe(
             map((response) => {
               // prepare the response to be handled, then return
              return response;
@@ -78,8 +66,8 @@ export class EntityInfoService {
             })
           );
     }
-    getEntityTreeInfo(id:number):Observable<any>{
-      return this.http.get(environment.apiurl+'entity/getEntityTreeDetails?id='+id).pipe(
+    getScenarioTreeDetails(id:number):Observable<any>{
+      return this.http.get(environment.apiurl+'scenario/getScenarioTreeDetails?id='+id).pipe(
           map((response) => {
             // prepare the response to be handled, then return
            return response;
@@ -104,8 +92,8 @@ export class EntityInfoService {
           })
         );
     }
-    updateEntityTree(data:EntityTreeModel):Observable<any>{
-      return this.http.post(environment.apiurl+'entity/updateEntityTree',data).pipe(
+    updateScenarioTree(data:EntityTreeModel):Observable<any>{
+      return this.http.post(environment.apiurl+'scenario/updateScenarioTree',data).pipe(
           map((response) => {
             // prepare the response to be handled, then return
            return response;

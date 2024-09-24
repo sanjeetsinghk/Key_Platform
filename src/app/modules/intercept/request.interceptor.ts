@@ -24,7 +24,10 @@ export class RequestInterceptor implements HttpInterceptor {
                 if (event instanceof HttpResponse) {
                     this._loading.setLoading(false, request.url);                    
                     if(event.body.success)
-                        this._sendResponse.sendResponse(event.body.message)
+                    {
+                        if(event.body.message)
+                            this._sendResponse.sendResponse(event.body.message)
+                    }
                     else
                         this._sendResponse.sendError(event.body.message)
                   }

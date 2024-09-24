@@ -1,7 +1,7 @@
 
 <div class="grid">
     <div class="col-12">
-        <h4>Entity Details</h4>
+        <h4>Scenario Details</h4>
     </div>
     <div class="col-12">
         <p-toast/>
@@ -10,6 +10,7 @@
                 <div class="col-12 p-fluid">
                     <label for="role" class="block text-700 font-medium mb-2">Product Type</label>
                     <p-dropdown 
+                        [readonly]="true"
                         formControlName="productType" appendTo="body" [filter]="true"  filterBy="name" 
                         [showClear]="true" [options]="entityTypeList" optionLabel="name" (onChange)="onEntityTypeSelect($event.value)"
                         placeholder="Select Field Type" autoWidth="false" class="w-100 w-full md:w-30rem" />
@@ -46,8 +47,8 @@
                     <p-checkbox 
                         formControlName="allowProductCloning" 
                         label="Allow Product Cloning" 
-                        [binary]="true" 
-                         />
+                        [binary]="true"
+                        inputId="ny" />
                 </div>
                 <div class="col-12 p-fluid">
                     <label for="role" class="block text-700 font-medium mb-2">Labels</label>

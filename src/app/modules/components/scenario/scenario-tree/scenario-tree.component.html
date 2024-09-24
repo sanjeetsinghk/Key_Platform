@@ -1,0 +1,155 @@
+<div class="grid p-fluid">
+    <p-toast/>
+    <div class="col-9">
+        <p-card header="Entity" class="w-100 w-full">
+            <div class="grid p-fluid">            
+                <div class="col-8">       
+                    <p-dropdown 
+                    appendTo="body" [filter]="true"  filterBy="name" 
+                    [showClear]="true" [options]="entityNodeTypeList" optionLabel="name" (onChange)="onEntityNodeTypeSelect($event.value)"
+                    placeholder="Select Entity Node Type" autoWidth="true" style="min-width:100%; min-width:10rem;" />
+                    
+                </div>
+                <div class="col-1 mt-1">
+                    <p-button  icon="pi pi-plus" severity="success" [rounded]="false" [outlined]="false" class="btnAdd" (click)="addedNode()"/>        
+                </div>
+                <div class="col-12">
+                    <p-tree [value]="files" layout="horizontal" 
+                    selectionMode="single" [(selection)]="selectedFiles3"  (onNodeSelect)="nodeSelect($event)" >
+                    <ng-template let-node pTemplate="default">
+                        <b>{{node.data.qty}} {{ node.label }}</b>
+                        <br/>
+                        <input  type="text" id="selectedValue" pInputText [(ngModel)]="node.data.customlabel" />
+                        <label>Total Cost: {{node.data.totalValue}}</label>
+                    </ng-template>
+                    </p-tree>
+                </div>
+                <div class="col-12 p-fluid">
+                    <form [formGroup]="productForm" (ngSubmit)="saveProduct()" *ngIf="showForm">
+                        <p-tabView orientation="left" class="w-full">
+                            <p-tabPanel header="Node Fields" class="line-height-3 m-0 w-full">                    
+                                <div class="grid">                        
+                                    <div class="col-12 p-fluid">
+                                        <ng-container formArrayName="groupArr">
+                                            <ng-container *ngFor="let item of groupArrList().controls; let groupIndex = index">
+                                                <div class="grid mt-1" [formGroupName]="groupIndex">
+                                                    <div class="col-12 align-items-center justify-content-center p-1">  
+                                                        <h4>{{item.value.name}}</h4> 
+                                                    </div>
+                                                    <ng-container formArrayName="groupArrItems">
+                                                        <ng-container *ngFor="let arrItem of groupArrItemsList(groupIndex).controls; let arrIndex = index">
+                                                            <ng-container [formGroupName]="arrIndex">
+                                                                <div class="col-4">
+                                                                    <label for="selectedValue">{{arrItem.value.fieldName}}</label>
+                                                                    <ng-container *ngIf="arrItem.value.elementType=='Text'">
+                                                                        <input *ngIf="arrItem.value.attributeType=='Required'" type="text" id="selectedValue" pInputText formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                                        <p-inputNumber *ngIf="arrItem.value.attributeType=='Range'"  [min]="arrItem.value.attributeValues.min" [max]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                                        <small id="username-help" *ngIf="arrItem.value.attributeType=='Range'">
+                                                                        Range should be selected in between {{arrItem.value.attributeValues.min}} to {{arrItem.value.attributeValues.max}}
+                                                                        </small>
+                                                                        <p-dropdown 
+                                                                            *ngIf="arrItem.value.attributeType=='DropDown'"
+                                                                            formControlName="selectedValue" appendTo="body" [filter]="true"  filterBy="name" 
+                                                                            [showClear]="true" [options]="arrItem.value.attributeValues" optionLabel="name"
+                                                                            placeholder="Select Option" autoWidth="false" class="w-100 w-full md:w-30rem" />
+                                                                    </ng-container>
+                                                                    <ng-container *ngIf="arrItem.value.elementType=='Number'">
+                                                                        <input type="number" *ngIf="arrItem.value.attributeType=='Required'" id="selectedValue" pInputText formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                                        <p-inputNumber *ngIf="arrItem.value.attributeType=='Range'"  [min]="arrItem.value.attributeValues.min" [max]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                                        <small id="username-help" *ngIf="arrItem.value.attributeType=='Range'">
+                                                                        Range should be selected in between {{arrItem.value.attributeValues.min}} to {{arrItem.value.attributeValues.max}}
+                                                                        </small>
+                                                                        <p-dropdown 
+                                                                        *ngIf="arrItem.value.attributeType=='DropDown'"
+                                                                        formControlName="selectedValue" appendTo="body" [filter]="true"  filterBy="name" 
+                                                                        [showClear]="true" [options]="arrItem.value.attributeValues" optionLabel="name"
+                                                                        placeholder="Select Option" autoWidth="false" class="w-100 w-full md:w-30rem" />
+                                                                    </ng-container>
+                                                                </div>
+                                                            </ng-container>
+                                                            
+                                                        </ng-container>
+                                                    </ng-container>
+                                                </div>
+                                            </ng-container>
+                                        </ng-container>
+                                    </div>
+                                
+                                </div>                    
+                            </p-tabPanel>
+                            <p-tabPanel header="Calculations" class="line-height-3 m-0 w-full dimension">
+                                <div class="grid">
+                                    <div class="col-6">
+                                        <label for="dimension1">Dimension 1</label> <strong class="ml-2"> Total: {{dim1val}}</strong>
+                                        <p-autoComplete 
+                                        formControlName="dimension1"
+                                        [suggestions]="suggestions"
+                                        (completeMethod)="search($event)"
+                                        [multiple]="true"
+                                        />
+                                    
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="dimension2">Dimension 2</label><strong class="ml-2"> Total: {{dim2val}}</strong>
+                                        <p-autoComplete 
+                                        formControlName="dimension2"
+                                        [suggestions]="suggestions"
+                                        (completeMethod)="search($event)"
+                                        [multiple]="true"
+                                        />
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="dimension3">Dimension 3</label><strong class="ml-2"> Total: {{dim3val}}</strong>
+                                        <p-autoComplete 
+                                        formControlName="dimension3"
+                                        [suggestions]="suggestions"
+                                        (completeMethod)="search($event)"
+                                        [multiple]="true"
+                                        />
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="dimension4">Dimension 4</label><strong class="ml-2"> Total: {{dim4val}}</strong>
+                                        <p-autoComplete 
+                                        formControlName="dimension4"
+                                        [suggestions]="suggestions"
+                                        (completeMethod)="search($event)"
+                                        [multiple]="true"
+                                        />
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="dimension5">Dimension 5</label><strong class="ml-2"> Total:  {{dim5val}}</strong>
+                                        <p-autoComplete 
+                                        formControlName="dimension5"
+                                        [suggestions]="suggestions"
+                                        (completeMethod)="search($event)"
+                                        [multiple]="true"
+                                        />
+                                    </div>
+                                </div>
+                            </p-tabPanel>
+                        </p-tabView>
+                        <div class="grid p-fluid" *ngIf="showForm">
+                            <div class="col-2 justify-content-start">
+                                <p-button class="pull-right" label="Save" type="submit"  [raised]="true" severity="success" />                                                
+                            </div>
+                            <div class="col-2 justify-content-start">                            
+                                <p-button class="pull-right" label="Cancel" [text]="true" (click)="cancel()" [raised]="true" severity="secondary" />              
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </p-card>
+    </div>
+    <div class="col-3">
+        <p-card header="Performance Indicators">
+           <div class="grid p-fluid">
+                <div class="col-12" >
+                    <ul class="" *ngFor="let item of performanceMetrics">
+                        <label>{{item.name}}</label> <strong class="ml-5">{{item.value}}</strong>
+                    </ul>
+                </div>
+           </div>
+        </p-card>
+    </div>
+</div>
