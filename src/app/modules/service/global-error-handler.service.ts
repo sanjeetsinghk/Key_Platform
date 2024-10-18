@@ -15,7 +15,7 @@ export class GlobalErrorHandlerService implements ErrorHandler {
             this.toastService.sendError("You have been loged out from the system, Please login back");
             this.authService.Logout();
         }
-        else     
+        else if(error && error.status!=0) 
             this.toastService.sendError(error)
        })
    }

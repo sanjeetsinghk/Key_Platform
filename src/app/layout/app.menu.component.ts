@@ -21,6 +21,12 @@ export class AppMenuComponent implements OnInit {
                 ]
             },
             {
+                label: 'Admin',
+                items: [
+                    { label: 'Manage Roles', icon: 'pi pi-fw pi-user', routerLink: ['/roles'] }
+                ]
+            },
+            {
                 label: 'Entities',
                 items: [
                     { label: 'Company', icon: 'pi pi-fw pi-id-card', routerLink: ['/company'] },
@@ -29,6 +35,7 @@ export class AppMenuComponent implements OnInit {
                         items:[
                            { label: 'Entity', icon: 'pi pi-fw pi-check-square', routerLink: ['/entity']},
                            { label: 'Entity Type', icon: 'pi pi-fw pi-check-square', routerLink: ['/entitytype']},
+                           { label: 'Entity Node', icon: 'pi pi-fw pi-check-square', routerLink: ['/entitynode']},
                            { label: 'Entity Node Type', icon: 'pi pi-fw pi-check-square', routerLink: ['/entitynodetype']}
                         ]
                     },

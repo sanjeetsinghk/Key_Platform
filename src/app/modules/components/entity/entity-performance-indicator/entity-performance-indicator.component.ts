@@ -83,7 +83,7 @@ export class EntityPerformanceIndicatorComponent {
     if(event.node?.data?.obj && event.node.data.obj)
     {
       let obj=JSON.parse(event.node.data.obj);  
-      let children=this.getSelectedNodeChildren(obj.entityNodeTypeFields,event.node )
+      let children=this.getSelectedNodeChildren(obj.entityNodeTypeFields || obj.entityInfoDetailsList,event.node )
       let items=[
         {label:'dimension1',value:event.node.key+'<==>'+'dimension1',calculatedValue:this.checkForTextandQuotes(obj?.dimension1Value),nodeName:event.node.data.customlabel},
         {label:'dimension2',value:event.node.key+'<==>'+'dimension2',calculatedValue:this.checkForTextandQuotes(obj?.dimension2Value),nodeName:event.node.data.customlabel},

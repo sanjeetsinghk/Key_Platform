@@ -53,18 +53,19 @@ save(){
       id:value ?value.id:0,
       companyId:this.authService.getSelectedCompany(),
       name:value.name,
-      description:value.description,
-      defaultCostFormula:value.costFormula,
-      defaultLeadTimeFormula:value.leadTimeFormula,
-      dimension3:value.dimension3,
-      dimension4:value.dimension4,
-      dimension5:value.dimension5,
-      labels:this.labels.join(','),
+      description:value.description || "",
+      defaultCostFormula:value.costFormula || "",
+      defaultLeadTimeFormula:value.leadTimeFormula || "",
+      dimension3:value.dimension3 || "",
+      dimension4:value.dimension4 || "",
+      dimension5:value.dimension5 || "",
+      labels:this.labels?this.labels.join(','):'',
       userid:this.authService.getUserId(),
       isBlocked:false,
       entityCustomFields:this.customField,
     }
-    if(value.id==0){
+    if(value.id==0 || value.id==null){
+      data.id=0;
       this.entityTypeService.saveEntityType(data).subscribe((resp)=>{
         this.form.reset();
       });

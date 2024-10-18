@@ -22,7 +22,7 @@ import { GlobalErrorHandlerService } from './modules/service/global-error-handle
     declarations: [AppComponent, NotfoundComponent],
     imports: [CommonModule,AppRoutingModule, AppLayoutModule,ToastModule,ReactiveFormsModule],
     providers: [
-        { provide: LocationStrategy, useClass: PathLocationStrategy },
+        { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
         PhotoService, ProductService,
         {provide:HTTP_INTERCEPTORS,useClass:RequestInterceptor,multi:true},

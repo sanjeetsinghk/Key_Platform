@@ -106,7 +106,7 @@ export class ScenarioTreeComponent {
       groupArr:this.formBuilder.array([])
     })
     if(data && data!=null){
-      let fieldsType=data?.entityNodeTypeFields || data?.entityInfoDetailsList
+      let fieldsType=data?.entityNodeTypeFields || data?.entityNodeInfoDetailsList ||  data?.entityInfoDetailsList
       const orderPriority = fieldsType
       .map(o => o.groupName)
       .reduce((map, category, idx) => {
@@ -450,7 +450,7 @@ getDimensionsValue(dimension:any[]){
   dimension.forEach((x)=>{
     let selectedValue=this.getFieldsValue(x);
     if(selectedValue){
-      if(Object.keys(selectedValue).length>0)
+      if(this.utility.isContainJson(selectedValue) && Object.keys(selectedValue).length>0)
         traverseVal+=selectedValue?.value;
       else
         traverseVal+=selectedValue;

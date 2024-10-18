@@ -117,4 +117,17 @@ export class EntityInfoService {
           })
         );
     }
+    getEntityNodeInfo(id:number):Observable<any>{
+      return this.http.get(environment.apiurl+'entitynode/getEntityNodeById?id='+id).pipe(
+          map((response) => {
+            // prepare the response to be handled, then return
+           return response;
+          }),
+          // if we are setting cookie on server, this is the place to call local server
+          //switchMap((user) => this.SetLocalSession(user)),
+          catchError((error)=>{
+            return throwError(error || 'server error.')
+          })
+        );
+  }
 }

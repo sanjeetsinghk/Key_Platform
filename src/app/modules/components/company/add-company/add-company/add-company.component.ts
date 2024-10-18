@@ -61,7 +61,7 @@ export class AddCompanyComponent {
       return false;
     let data=this.form.value;
     let company:ICompany={
-      id:this.data.id,
+      id:this.data?this.data.id:0,
       name:data.company_name,      
       email:data.company_email,     
       isOrganizer:data.isOrganizer,      

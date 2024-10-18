@@ -19,5 +19,6 @@ export interface IEntityNodeTypeModel{
 	userid:number;
 	isBlocked:boolean;
     entityNodeTypeFields:IEntityNodeTypCustomFieldsModel[];
+	entityNodeInfoDetailsList?:IEntityNodeTypCustomFieldsModel[];
 	entityInfoDetailsList?:IEntityNodeTypCustomFieldsModel[];
 }

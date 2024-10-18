@@ -80,15 +80,15 @@ export class EntityTreeComponent {
   bindEntityForm(data:IEntityNodeTypeModel){
     this.productForm=this.formBuilder.group({
       companyId:[data?.companyId],
-      dimension1:[data?.defaultCostFormula? data?.defaultCostFormula:undefined],
+      dimension1:[data?.defaultCostFormula? this.convertToArrIfObj(data?.defaultCostFormula):undefined],
       dimension1Value:[data?.dimension1Value],
-      dimension2:[data?.defaultLeadTimeFormula?data?.defaultLeadTimeFormula:undefined],
+      dimension2:[data?.defaultLeadTimeFormula? this.convertToArrIfObj(data?.defaultLeadTimeFormula):undefined],
       dimension2Value:[data?.dimension3Value],
-      dimension3:[data?.dimension3?data?.dimension3:undefined],
+      dimension3:[data?.dimension3? this.convertToArrIfObj(data?.dimension3):undefined],
       dimension3Value:[data?.dimension3Value],
-      dimension4:[data?.dimension4?data?.dimension4:undefined],
+      dimension4:[data?.dimension4? this.convertToArrIfObj(data?.dimension4):undefined],
       dimension4Value:[data?.dimension4Value],
-      dimension5:[data?.dimension5?data?.dimension5:undefined],
+      dimension5:[data?.dimension5?this.convertToArrIfObj(data?.dimension5):undefined],
       dimension5Value:[data?.dimension5Value],
       description:[data?.description],
       id:[data?.id],
@@ -99,7 +99,7 @@ export class EntityTreeComponent {
       groupArr:this.formBuilder.array([])
     })
     if(data && data!=null){
-      let fieldsType=data?.entityNodeTypeFields || data?.entityInfoDetailsList
+      let fieldsType=data?.entityNodeTypeFields || data?.entityNodeInfoDetailsList ||  data?.entityInfoDetailsList
       const orderPriority = fieldsType
       .map(o => o.groupName)
       .reduce((map, category, idx) => {
@@ -110,7 +110,29 @@ export class EntityTreeComponent {
       }, {}); 
       let sortedArray=  fieldsType.sort((a, b) => orderPriority[a.groupName] - orderPriority[b.groupName]);
       this.sortingArrangements(sortedArray);
+      // if(data?.defaultCostFormula){
+      //   this.fields.push(this.convertToArrIfObj(data.defaultCostFormula));
+      // }
+      // if(data?.defaultLeadTimeFormula){
+      //   this.fields.push(this.convertToArrIfObj(data.defaultLeadTimeFormula));
+      // }
+      // if(data?.dimension3){
+      //   this.fields.push(this.convertToArrIfObj(data.dimension3));
+      // }
+      
+      // if(data?.dimension4){
+      //   this.fields.push(this.convertToArrIfObj(data.dimension4));
+      // }
+      // if(data?.dimension5){
+      //   this.fields.push(this.convertToArrIfObj(data.dimension5));
+      // }
+     
     }
+  }
+  convertToArrIfObj(value:any){
+    if(typeof(value)== 'string' || typeof(value)== 'number')
+      return [value];
+    return value;
   }
   sortingArrangements(sortedArray:any[]){
     try{
@@ -450,7 +472,7 @@ getDimensionsValue(dimension:any[]){
   dimension.forEach((x)=>{
     let selectedValue=this.getFieldsValue(x);
     if(selectedValue){
-      if(Object.keys(selectedValue).length>0)
+      if(this.utility.isContainJson(selectedValue) && Object.keys(selectedValue).length>0)
         traverseVal+=selectedValue?.value;
       else
         traverseVal+=selectedValue;

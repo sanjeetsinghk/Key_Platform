@@ -12,11 +12,11 @@ import { EntityNodeTypeService } from 'src/app/modules/service/entity-node-type.
 import { EntityTypeService } from 'src/app/modules/service/entity-type.service';
 
 @Component({
-  selector: 'app-entity', 
-  templateUrl: './entity.component.html',
-  styleUrl: './entity.component.scss'
+  selector: 'app-entity-node', 
+  templateUrl: './entity-node.component.html',
+  styleUrl: './entity-node.component.scss'
 })
-export class EntityComponent {
+export class EntityNodeComponent {
  entityNodeTypeList:IEntityNodeTypeModel[];
   selectedProduct:EntityInfoModel;
   entityId:number;
@@ -32,7 +32,7 @@ export class EntityComponent {
           CompanyId:this.authService.getSelectedCompany(),
           UserId:this.authService.getUserId()
         }
-        this.entityNodeTypeService.getEntityNodeLists(data).subscribe({
+        this.entityNodeTypeService.getEntityList(data).subscribe({
           next:(resp)=>{
             this.entityNodeTypeList=resp.resultData;
           }
@@ -51,7 +51,7 @@ export class EntityComponent {
       next:(resp)=>{
         this.entityTypeList=resp.resultData;
         if(this.entityId){
-          this.entityInfoService.getEntityInfo(this.entityId).subscribe({
+          this.entityInfoService.getEntityNodeInfo(this.entityId).subscribe({
             next:(resp)=>{
               if(resp.success && resp.resultData){
                 this.selectedProduct=resp.resultData;

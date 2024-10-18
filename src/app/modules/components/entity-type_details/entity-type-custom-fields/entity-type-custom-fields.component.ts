@@ -55,7 +55,7 @@ export class EntityTypeCustomFieldsComponent {
         entityTypeId:[data?data.entityTypeId:0],
         name: [data ? data.name:'', [Validators.required]],  
         type:[data? JSON.parse(data.fieldType):'',[Validators.required]],
-        constraint:[data ? JSON.parse(data.fieldConstraint):''],
+        constraint:[data ? JSON.parse(data.fieldConstraint):'',[Validators.required]],
         constraintValue:[data ? data.constraintValue:''],
         constraintValueList:this.formBuilder.array([]),
         group_name:[data ? data.groupName:''],
@@ -125,9 +125,16 @@ save(){
     let formValue=this.formCustom.value;
     let isNameExist=false;
     let isSequenceExist=false;
+    let updateExitingfield=false;
     if(formValue.id==0 || formValue.id==null){//for new
-      isNameExist=this.customFields.filter((x)=>x.name.toLowerCase()==formValue.name.toLowerCase()).length>0;
-      isSequenceExist=this.customFields.filter((x)=>x.sequence==formValue.sequence).length>0;
+      updateExitingfield=this.customFields.filter(
+        (x)=>x.name.toLowerCase()==formValue.name.toLowerCase() && x.id==formValue.id
+       ).length>0
+      isNameExist=this.customFields.filter(
+        (x)=>x.name.toLowerCase()==formValue.name.toLowerCase() && x.id!=formValue.id
+       ).length>0;
+      isSequenceExist=this.customFields.filter((x)=>x.sequence==formValue.sequence && x.id!=formValue.id).length>0;
+
     }
     else if(formValue.id>0){// for update
       isNameExist=this.customFields.filter((x)=>x.name.toLowerCase()==formValue.name.toLowerCase() && x.id!=formValue.id).length>0;
@@ -172,16 +179,33 @@ save(){
         console.log(this.customFields)
       }
       else{
-        this.customFields.push({
-          name:formValue.name,
-          type:formValue.type.name,
-          constraint:formValue.constraint.name,
-          ...data
-        });
+        if(updateExitingfield){
+          this.customFields=this.customFields.map((x)=>{
+            if(x.name==this.product.name){
+              x={
+                name:formValue.name,
+                type:formValue.type.name,
+                constraint:formValue.constraint.name,
+                ...data
+              }
+            }
+            return x;
+          });
+        }
+        else
+        {
+          this.customFields.push({
+            name:formValue.name,
+            type:formValue.type.name,
+            constraint:formValue.constraint.name,
+            ...data
+          });
+        }
       }
       
       this.newItemEvent.emit(this.customFields);
       this.formCustom.reset();
+      this.labels=[];
       this.submitted=false;
       this.contraintType=null; 
     }
@@ -196,11 +220,17 @@ editProduct(product: any) {
 
 deleteProduct(product: any) {  
   this.product = { ...product };
-  this.customFields.forEach(element => {
-    if(element.name==product.name){
-      element.isBlocked=true;
-    }
-  });
+  if(this.product.id==0 || this.product.id==null)
+  {
+    this.customFields=this.customFields.filter((x)=>x.name!=this.product.name);
+  }
+  else{
+    this.customFields.forEach(element => {
+      if(element.name==product.name){
+        element.isBlocked=true;
+      }
+    });
+  }
   this.newItemEvent.emit(this.customFields);
 }
 cancel(){

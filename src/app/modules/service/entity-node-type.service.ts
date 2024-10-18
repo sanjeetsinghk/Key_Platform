@@ -8,6 +8,8 @@ import { LocalStorageService } from './local-storage.service';
 import { UserDto } from '../models/userDto.model';
 import { ISelectedCompanyDto } from '../models/company-selection.model';
 import { IEntityNodeTypeModel } from '../models/entity-node-type.model';
+import { EntityInfoModel } from '../models/entity-info.model';
+import { EntityNodeInfoModel } from '../models/entity-node.model';
 
 @Injectable({
     providedIn:'root'
@@ -16,7 +18,7 @@ export class EntityNodeTypeService {
     constructor(private http: HttpClient,private localStorageService:LocalStorageService) { }
     selectedEntityModel:IEntityNodeTypeModel;
     saveEntityType(data:IEntityNodeTypeModel):Observable<any>{
-        return this.http.post(environment.apiurl+'entitynodetype/saveEntityNodeType',data).pipe(
+        return this.http.post(environment.apiurl+'entitynode/saveEntityNodeType',data).pipe(
             map((response) => {
               // prepare the response to be handled, then return
              return response;
@@ -29,7 +31,7 @@ export class EntityNodeTypeService {
           );
     }
     updateEntityType(data:IEntityNodeTypeModel):Observable<any>{
-        return this.http.post(environment.apiurl+'entitynodetype/updateEntityNodeType',data).pipe(
+        return this.http.post(environment.apiurl+'entitynode/updateEntityNodeType',data).pipe(
             map((response) => {
               // prepare the response to be handled, then return
              return response;
@@ -42,7 +44,7 @@ export class EntityNodeTypeService {
           );
     }
     deleteEntityType(data:IEntityNodeTypeModel[]):Observable<any>{
-        return this.http.post(environment.apiurl+'entitynodetype/deleteEntityNodeType',data).pipe(
+        return this.http.post(environment.apiurl+'entitynode/deleteEntityNodeType',data).pipe(
             map((response) => {
               // prepare the response to be handled, then return
              return response;
@@ -55,7 +57,7 @@ export class EntityNodeTypeService {
           );
     }
     getEntityList(data:ISelectedCompanyDto):Observable<any>{
-        return this.http.post(environment.apiurl+'entitynodetype/getEntityNodeTypeLists',data).pipe(
+        return this.http.post(environment.apiurl+'entitynode/getEntityNodeTypeLists',data).pipe(
             map((response) => {
               // prepare the response to be handled, then return
              return response;
@@ -67,5 +69,43 @@ export class EntityNodeTypeService {
             })
           );
     }
-    
+    saveEntityNode(data:EntityNodeInfoModel):Observable<any>{
+      return this.http.post(environment.apiurl+'entitynode/saveEntityNode',data).pipe(
+          map((response) => {
+            // prepare the response to be handled, then return
+           return response;
+          }),
+          // if we are setting cookie on server, this is the place to call local server
+          //switchMap((user) => this.SetLocalSession(user)),
+          catchError((error)=>{
+            return throwError(error || 'server error.')
+          })
+        );
+    }
+    updateEntityNode(data:EntityNodeInfoModel):Observable<any>{
+      return this.http.post(environment.apiurl+'entitynode/updateEntityNode',data).pipe(
+          map((response) => {
+            // prepare the response to be handled, then return
+           return response;
+          }),
+          // if we are setting cookie on server, this is the place to call local server
+          //switchMap((user) => this.SetLocalSession(user)),
+          catchError((error)=>{
+            return throwError(error || 'server error.')
+          })
+        );
+    }
+    getEntityNodeLists(data:ISelectedCompanyDto):Observable<any>{
+      return this.http.post(environment.apiurl+'entitynode/getEntityNodeLists',data).pipe(
+          map((response) => {
+            // prepare the response to be handled, then return
+           return response;
+          }),
+          // if we are setting cookie on server, this is the place to call local server
+          //switchMap((user) => this.SetLocalSession(user)),
+          catchError((error)=>{
+            return throwError(error || 'server error.')
+          })
+        );
+  }
 }

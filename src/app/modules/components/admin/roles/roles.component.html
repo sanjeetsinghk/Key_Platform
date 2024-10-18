@@ -1,0 +1,50 @@
+<div class="grid">
+    <div class="col-12">        
+        <div class="card px-6 py-6">
+            <div class="px-1 py-1 mb-2">
+                <h3 class="m-0">Manage Roles</h3>
+            </div>
+            <p-toast/>
+            <form [formGroup]="productForm" (ngSubmit)="saveRoles()" class="w-full">
+                <div class="col-12">        
+                    <p-panel header="Roles Manager">            
+                        <ng-container formArrayName="rolesArr">
+                            <table class="w-full text-left">
+                                <tr class="justify-content-center">
+                                    <th>Name</th><th>Paltform Admin</th>
+                                    <th>Company Admin </th><th>Entity User</th>
+                                    <th>Entity Developer</th>                                    
+                                </tr>
+                        
+                                <ng-container *ngFor="let item of groupArrList().controls; let groupIndex = index">
+                                    <ng-container [formGroupName]="groupIndex">
+                                        <tr class="justify-content-center mt-3">
+                                            <td><strong>{{item.value.name}}</strong></td>
+                                            <td><p-checkbox  formControlName="platformAdmin" /></td>
+                                            <td><p-checkbox  formControlName="companyAdmin" /></td>
+                                            <td><p-checkbox  formControlName="entityUser" /></td>
+                                            <td><p-checkbox  formControlName="entityDeveloper" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="dimension">
+                                                
+                                            </td>
+                                        </tr>
+                                    </ng-container>                    
+                                </ng-container>
+                            </table>
+                        </ng-container>            
+                    </p-panel>    
+                </div>
+                <div class="grid p-fluid" >
+                    <div class="col-2 justify-content-start">
+                        <p-button class="pull-right" label="Save" type="submit"  [raised]="true" severity="success" />                                                
+                    </div>
+                    <div class="col-2 justify-content-start">                            
+                        <p-button class="pull-right" label="Cancel" [text]="true" (click)="cancel()" [raised]="true" severity="secondary" />              
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

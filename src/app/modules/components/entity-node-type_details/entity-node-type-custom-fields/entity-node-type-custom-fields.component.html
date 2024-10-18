@@ -41,8 +41,8 @@
                         formControlName="type" appendTo="body" [filter]="true"  filterBy="name" 
                         [showClear]="true" [options]="fieldTypeList" optionLabel="name"
                         placeholder="Select Field Type" />
-                    <div *ngIf="submitted && f.name.errors" class="invalid-feedback mb-1">
-                        <div *ngIf="f.name.errors.required">Field Type is required</div>                   
+                    <div *ngIf="submitted && f.type.errors" class="invalid-feedback mb-1">
+                        <div *ngIf="f.type.errors.required">Field Type is required</div>                   
                     </div>
                 </div>
                 <div class="col-8">
@@ -116,7 +116,7 @@
             
         </form>
     </div>
-    <div class="col-8">        
+    <div class="col-12">        
         <p-table #dt [value]="customFields" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['fieldName','fieldType','constraint']" [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"  selectionMode="multiple" [rowHover]="true" dataKey="id">
             <ng-template pTemplate="caption">
                 <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
