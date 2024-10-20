@@ -83,6 +83,14 @@ export class AuthState {
     return null;
   }
 
+  private _GetUserPermission(permission:string,permissionId:number): boolean {   
+    const _localuser: IAuthInfo = JSON.parse(localStorage.getItem('user'));
+    let permissions=_localuser.payload.permission;
+    if(permissions && permissions.length){
+      return permissions.filter((x)=>(x.permissionId==permissionId || x.permissionName==permission) && x.isAllowed).length>0;
+    }    
+    return false;
+  }
   // adding cookie saving methods
   private _SetCookie(user: IAuthInfo) {
     // save cookie with user, be selective in real life as to what to save in cookie

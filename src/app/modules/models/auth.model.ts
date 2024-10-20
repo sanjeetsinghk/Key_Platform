@@ -30,7 +30,8 @@ export const NewAuthInfo = (data: any): IAuthInfo => {
       companyIds:data.companyIds,
       selectedCompany:data.selectedCompany,
       expiration:data.expiration,
-      companyName:data.companyName
+      companyName:data.companyName,
+      permission:data.permission
     },
     token: data.token,
     //refreshToken: data.refreshToken,

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { RoleType } from 'src/app/modules/constants/roleEnum';
 import { RolePermissionModel } from 'src/app/modules/models/role-permission.model';
-import { RolePermissionDto } from 'src/app/modules/models/role-permissionDto.model';
+import { RolePermissionDto, RolePermissionSavedDto } from 'src/app/modules/models/role-permissionDto.model';
 import { RolesService } from 'src/app/modules/service/roles.service';
 
 @Component({
@@ -28,8 +28,10 @@ export class RolesComponent {
         let uniquePermission=this.rolePermissionList.map((x)=>{
           return {permissionId:x.permissionId,title:x.title}
         });
-        console.log(uniquePermission)
-        this.rolePermissionList.forEach((item,index)=>{
+        const arrayUniqueByKey = [...new Map(this.rolePermissionList.map(item =>
+          [item['title'], item])).values()];
+        console.log(arrayUniqueByKey)
+        arrayUniqueByKey.forEach((item,index)=>{
           this.roles.push({
             name:item.title,
             permissionId:item.permissionId,
@@ -38,7 +40,9 @@ export class RolesComponent {
             entityUser:this.getRoleValue(item.permissionId,RoleType.EntityUser),
             entityDeveloper:this.getRoleValue(item.permissionId,RoleType.EntityDeveloper),
           });
-          this.addGroupArrList(this.roles[index])
+          
+          this.addGroupArrList(this.roles[index]);
+          
         })
         console.log(this.roles);
        
@@ -78,7 +82,7 @@ export class RolesComponent {
     try{
       const constraintValueForm = this.productForm.controls.rolesArr as FormArray;
       constraintValueForm.push(this.formBuilder.group({
-        name:item.title,
+        name:[item.name],
         permissionId:item.permissionId,
         platformAdmin:item.platformAdmin,
         companyAdmin:item.companyAdmin,
@@ -91,7 +95,41 @@ export class RolesComponent {
     }
   }
   saveRoles(){
+    console.log(this.productForm.value)
+    let rolesArr=this.productForm.value.rolesArr;
+    let modelList:RolePermissionSavedDto[]=[];
+    rolesArr.forEach((item)=>{
+      modelList.push({
+        permissionName:item.name,
+        permissionId:item.permissionId,
+        roleId:RoleType.PlatformAdmin,
+        isAllowed:item['platformAdmin']
+      });
+      modelList.push({
+        permissionName:item.name,
+        permissionId:item.permissionId,
+        roleId:RoleType.CompanyAdmin,
+        isAllowed:item['companyAdmin']
+      });
+      modelList.push({
+        permissionName:item.name,
+        permissionId:item.permissionId,
+        roleId:RoleType.EntityUser,
+        isAllowed:item['entityUser']
+      });
+      modelList.push({
+        permissionName:item.name,
+        permissionId:item.permissionId,
+        roleId:RoleType.EntityDeveloper,
+        isAllowed:item['entityDeveloper']
+      });
+    });
+    console.log(modelList)
+    this.rolesService.saveRoles(modelList).subscribe({
+      next:(resp)=>{
 
+      }
+    })
   }
   cancel(){}
 }

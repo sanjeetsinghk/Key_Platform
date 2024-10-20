@@ -8,6 +8,7 @@ export interface IUser {
     expiration:string;
     selectedCompany:number;
     companyName:string;
+    permission:any[];
 }
 export interface Roles{
     id:number;

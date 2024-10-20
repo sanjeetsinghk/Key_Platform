@@ -6,3 +6,9 @@ export interface RolePermissionDto{
     entityUser:boolean;
     entityDeveloper:boolean;
 }
+export interface RolePermissionSavedDto{
+    permissionId:number;
+    roleId:number;
+    isAllowed:boolean;
+    permissionName:string;
+}
