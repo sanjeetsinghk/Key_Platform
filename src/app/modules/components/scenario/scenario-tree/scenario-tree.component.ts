@@ -1,7 +1,8 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { MessageService, TreeNode } from 'primeng/api';
+import { MenuItem, MessageService, TreeNode } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs';
 
 import { SuggestionLists } from 'src/app/modules/constants/suggestions-list';
@@ -47,7 +48,10 @@ export class ScenarioTreeComponent {
   entityId:number=0;
   entityTreeId:number=0;
   performanceMetrics:any[]=[];
-  constructor(
+  menuItems!: MenuItem[];
+  downloadJsonHref:any;
+  suggestItems:MenuItem[]=[];
+  constructor(private sanitizer:DomSanitizer,
     private authService:AuthService,
     private entityInfoService:ScenarioService,
     private activeRouter:ActivatedRoute,
@@ -58,32 +62,73 @@ export class ScenarioTreeComponent {
   }
   ngOnInit(){
     this.bindEntityForm(null);
-    this.activeRouter.params.subscribe(result =>
-    {          
-      this.entityId=result["id"];
-      if(!isNaN(this.entityId)){
-        this.entityInfoService.getScenarioTreeDetails(this.entityId).subscribe({
-          next:(resp)=>{
-            console.log(resp.resultData)
-            if(resp.resultData){
-              let data=resp.resultData;
-              this.onSavedEntityTreeEvent.emit(resp.resultData);
-              this.entityTreeId=data.id;
-              this.files.push(JSON.parse(data.treeNode));
-              this.expandAll();
-              this.bindPerformanceMetrics();
-            }
+   
+  }
+  ngAfterViewInit(){
+    if(this.entityId==0){
+      this.activeRouter.params.subscribe(result =>
+        {          
+          this.entityId=result["id"];
+          if(!isNaN(this.entityId)){
+            this.entityInfoService.getScenarioTreeDetails(this.entityId).subscribe({
+              next:(resp)=>{
+                console.log(resp.resultData)
+                if(resp.resultData){
+                  let data=resp.resultData;
+                  this.onSavedEntityTreeEvent.emit(resp.resultData);
+                  this.entityTreeId=data.id;
+                  this.files=[JSON.parse(data.treeNode)];
+                  this.expandAll();
+                  this.bindPerformanceMetrics();
+                  this.generateDownloadJsonUri();
+                }
+              }
+            })
+          }
+          else
+          {
+            this.bindEntityForm(null); 
           }
         })
+        this.menuItems = [        
+          { label: 'Remove Node', icon: 'pi pi-times', command: (event) => this.unselectFile() }
+        ];
+    }
+  }
+  generateDownloadJsonUri() {
+    var theJSON = JSON.stringify(this.files);
+    console.log(theJSON)
+    var uri = this.sanitizer.bypassSecurityTrustUrl("data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
+    this.downloadJsonHref = uri;
+  }
+  unselectFile() {
+    console.log(this.selectedFiles3);
+    if(this.files[0]==this.selectedFiles3.key)
+    {
+      this.files=[];
+    }
+    else{
+      this.deleteAndInsertNode(this.files[0])
+    }
+  }
+  deleteAndInsertNode(data:TreeNode){
+    try{
+      if(data.children.filter((x)=>x.key==this.selectedFiles3.key.toString()).length>0){
+        data.children=data.children.filter((x)=>x.key!==this.selectedFiles3.key.toString());        
+        return;
       }
       else
       {
-        this.bindEntityForm(null); 
+        data.children.forEach((x)=>{
+          this.deleteAndInsertNode(x)
+        })
+      
       }
-    })
-     
+    }
+    catch(err){
+      console.log(err)
+    }
   }
- 
   bindEntityForm(data:IEntityNodeTypeModel){
     this.productForm=this.formBuilder.group({
       companyId:[data?.companyId],
@@ -311,6 +356,7 @@ reCalculateFields(){
   this.dim1val="";this.dim2val="";this.dim3val="";this.dim4val="";this.dim5val="";
     let value =this.productForm.value;
     let totalValue=0;
+    this.getAllNodesCalculatedFields();
     if(value.dimension1){
       try{
         let dim1=typeof(value.dimension1) =='object'? eval(this.getDimensionsValue(value.dimension1)):value.dimension1;
@@ -448,31 +494,42 @@ findAndUpdateNode(data:TreeNode,obj:any,totalVal:any){
 getDimensionsValue(dimension:any[]){
   let traverseVal="";
   dimension.forEach((x)=>{
-    let selectedValue=this.getFieldsValue(x);
-    if(selectedValue){
-      if(this.utility.isContainJson(selectedValue) && Object.keys(selectedValue).length>0)
-        traverseVal+=selectedValue?.value;
+    if(this.nodes.filter((element)=>element.name==x).length>0)
+      {
+        let val=this.nodes.filter((element)=>element.name==x)[0].value;
+        traverseVal+=val;
+      }
       else
-        traverseVal+=selectedValue;
-    }
-    else
-    {
-      if(x=='++')
-        traverseVal+='+1';
-      else if(x=='--')
-        traverseVal+='-1';
-      else
-        traverseVal+=x;
-    }
+      {
+        let selectedValue=this.getFieldsValue(x);
+        if(selectedValue){
+          if(this.utility.isContainJson(selectedValue) && Object.keys(selectedValue).length>0)
+            traverseVal+=selectedValue?.value;
+          else
+            traverseVal+=selectedValue;
+        }
+        else
+        {
+          if(x=='++')
+            traverseVal+='+1';
+          else if(x=='--')
+            traverseVal+='-1';
+          else
+            traverseVal+=x;
+        }
+      }
   });
   return traverseVal;
 }
-getFieldsValue(fieldName:string){
+getFieldsValue(fieldName:string){ 
   let selectedValue:any;
   this.productForm.value.groupArr.forEach((item)=>{
     item.groupArrItems.forEach((x)=>{
       if(x.fieldName.toLowerCase()== fieldName.toLowerCase()){
-        selectedValue= x.selectedValue;
+        if(typeof(x.selectedValue)==='object')
+          selectedValue= x.selectedValue.value;// drop down calulcation to get value
+        else
+          selectedValue= x.selectedValue;
       }
     });
   });
@@ -498,6 +555,7 @@ nodeSelect(event:any){
   this.showForm=false;
   if(event.node?.data?.obj && event.node.data.obj)
   {
+    this.selectedItem=event.node;
     let obj=JSON.parse(event.node.data.obj);    
     this.clearFormArray(this.groupArrList());
     this.productForm.reset();
@@ -507,14 +565,75 @@ nodeSelect(event:any){
     console.log(JSON.parse(event.node.data.obj));
     this.nodeId=event.node.key;
     this.reCalculateFields();
-    this.suggestions= Array.from([...this.fields]);
+    this.suggestions= Array.from([...this.nodes.map((x)=>x.name),...this.fields]);
+    
   }  
 }
+
 search(event: AutoCompleteCompleteEvent) {
   console.log(event)
   //this.suggestions = Array.from([...this.fields,...SuggestionLists])
  // return this.suggestions=[... this.suggestions = Array.from(this.brands)];
-  this.suggestions =[... [...this.fields,...SuggestionLists,event.query].filter((x)=>x.indexOf(event.query)!=-1)];
+  this.suggestions =[... [...this.fields,...SuggestionLists,event.query].filter((x)=>x.toLowerCase().indexOf(event.query.toLowerCase())!=-1)];
+}
+nodes:any[]=[];
+focusElement:string;
+getAllNodesCalculatedFields(){
+  this.getRecursiveNodes(this.files);
+  this.bindAllNodesList(this.files);
+}
+focusFunction(focusElement:string){
+  console.log(focusElement);
+  this.focusElement=focusElement;
+}
+addToDimension(event:any,label:string){
+  console.log(event);
+  console.log(label);
+  console.log(this.focusElement);
+  if(this.focusElement!==undefined){
+    let _selectedValue=this.productForm.get(this.focusElement).value;
+    if(_selectedValue && typeof(_selectedValue)==='object')
+      _selectedValue.push(label);
+    else
+    _selectedValue=[label]
+    this.productForm.get(this.focusElement).setValue(_selectedValue);
+  }
+  
+}
+getChildrenNodes(node:TreeNode[]){
+  let nodes=[];
+  node.forEach(element => {
+    nodes.push({
+      label: element.label, icon: 'pi pi-plus', command: (event) => this.addToDimension(event,element.label),
+      items:this.getChildrenNodes(element.children)
+    })
+  });
+  return nodes
+}
+bindAllNodesList(node:TreeNode[]){
+  this.suggestItems=[];
+  node.forEach((x)=>{
+    this.suggestItems.push(
+      { 
+        label: x.label, icon: 'pi pi-plus', command: (event) => this.addToDimension(event,x.label),
+        items:x.children && x.children.length>0?this.getChildrenNodes(x.children):[]
+      }
+    )
+  });
+}
+getRecursiveNodes(node:TreeNode[]){   
+  node.forEach((x)=>{
+    this.nodes.push({
+      name:x?.label,
+      value:x?.data?.totalValue
+    });
+    if(x.children && x.children.length>0){
+      this.getRecursiveNodes(x.children)
+    }
+    
+  })
+ 
+  console.log(this.nodes)
 }
 saveCalculation(){}
 }

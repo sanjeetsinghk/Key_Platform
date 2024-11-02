@@ -20,6 +20,7 @@ import { Utility } from 'src/app/modules/utility/utility';
 export class ProductInfoComponent {
   productForm:FormGroup;
   productFormArr:FormGroup;
+  @Input() canManageEntityNode:boolean=false;
   @Input() entityTypeList:IEntityTypeModel[];
   @Output() savedProductEvent = new EventEmitter<EntityInfoModel>();
   @Input() selectedProduct:EntityInfoModel;

@@ -6,14 +6,12 @@
                 <h3 class="m-0">Entity Node List</h3>
             </div>
             <p-toast/>
-            <p-toolbar styleClass="mb-4">
+            <p-toolbar styleClass="mb-4" >
                 <ng-template pTemplate="left">
-                    <div class="my-2">
+                    <div class="my-2" *ngIf="canManageEntityNode">
                         <button pButton pRipple label="New Entity Node" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>                        
                     </div>
                 </ng-template>
-
-               
             </p-toolbar>
 
             <p-table #dt [value]="entityList" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['type','fields','description']" [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [(selection)]="selectedProducts" selectionMode="multiple" [rowHover]="true" dataKey="id">
@@ -32,11 +30,11 @@
                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                         </th>
                         <th></th>
-                        <th>Id <p-sortIcon field="id"></p-sortIcon></th>
+                        <th>Id</th>
                         <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
                         <th pSortableColumn="entityTypeName">Type <p-sortIcon field="entityTypeName"></p-sortIcon></th>
                         <th pSortableColumn="labels">Labels <p-sortIcon field="labels"></p-sortIcon></th>
-                        <th pSortableColumn="isBlocked">State <p-sortIcon field="isBlocked"></p-sortIcon></th>
+                        <th pSortableColumn="isBlocked">Is Blocked <p-sortIcon field="isBlocked"></p-sortIcon></th>
                         <th></th>
                     </tr>
                 </ng-template>
@@ -50,8 +48,6 @@
                         </td>
                         <td style="width:14%; min-width:10rem;">
                             <span class="p-column-title">Id</span>
-                           
-                            
                             {{rowIndex+1}}
                         </td>
                         <td style="width:14%; min-width:10rem;">
@@ -67,14 +63,14 @@
                             {{product.labels}}
                         </td>
                         <td style="width:14%; min-width:10rem;">
-                            <span class="p-column-title">State</span>
+                            <span class="p-column-title">Is Blocked</span>
                             <p-tag [value]="product.isBlocked ?'Yes':'No'" [severity]="getSeverity(product.isBlocked)" />
                             
                         </td>
                         <td>
                             <div class="flex">
                                 <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2 list-icon-style" (click)="editProduct(product)"></button>
-                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning list-icon-style" (click)="deleteProduct(product)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning list-icon-style" (click)="deleteProduct(product)" *ngIf="deleteEntityNode"></button>
                             </div>
                         </td>
                     </tr>
@@ -85,9 +81,9 @@
         <p-dialog [(visible)]="deleteProductsDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
             <div class="flex align-items-center justify-content-center">
                 <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                <span>Are you sure you want to delete selected Entities?</span>
+                <span>Are you sure you want to Block/Un-Block selected Entities?</span>
             </div>
-            <ng-template pTemplate="footer">
+            <ng-template pTemplate="footer" >
                 <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteProductsDialog = false"></button>
                 <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDeleteSelected()"></button>
             </ng-template>
@@ -95,7 +91,7 @@
         <p-dialog [(visible)]="deleteProductDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
             <div class="flex align-items-center justify-content-center">
                 <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                <span *ngIf="product">Are you sure you want to delete <b>{{product.name}}</b>?</span>
+                <span *ngIf="product">Are you sure you want to {{product.isBlocked?'Un-Block':'Blocked'}} <b>{{product.name}}</b>?</span>
             </div>
             <ng-template pTemplate="footer">
                 <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteProductDialog = false"></button>

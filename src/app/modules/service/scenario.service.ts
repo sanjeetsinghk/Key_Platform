@@ -6,6 +6,7 @@ import { LocalStorageService } from './local-storage.service';
 import { EntityInfoModel } from '../models/entity-info.model';
 import { EntityTreeModel } from '../models/entity-tree.model';
 import { ScenarioDto } from '../models/scenarioDto';
+import { IEntityListModel } from '../models/entity-list.model';
 
 @Injectable({
     providedIn:'root'
@@ -94,6 +95,19 @@ export class ScenarioService {
     }
     updateScenarioTree(data:EntityTreeModel):Observable<any>{
       return this.http.post(environment.apiurl+'scenario/updateScenarioTree',data).pipe(
+          map((response) => {
+            // prepare the response to be handled, then return
+           return response;
+          }),
+          // if we are setting cookie on server, this is the place to call local server
+          //switchMap((user) => this.SetLocalSession(user)),
+          catchError((error)=>{
+            return throwError(error || 'server error.')
+          })
+        );
+    }
+    deleteScenario(data:IEntityListModel[]):Observable<any>{
+      return this.http.post(environment.apiurl+'scenario/deleteScenario',data).pipe(
           map((response) => {
             // prepare the response to be handled, then return
            return response;

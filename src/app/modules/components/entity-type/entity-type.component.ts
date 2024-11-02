@@ -8,6 +8,8 @@ import { EntityTypeService } from '../../service/entity-type.service';
 import { AuthService } from '../../service/auth.service';
 import { ISelectedCompanyDto } from '../../models/company-selection.model';
 import { IEntityTypCustomFieldsModel } from '../../models/entity-type-custom-fields.model';
+import { AuthState } from '../../service/auth.state';
+import { RolePermission } from '../../constants/role-permission';
 
 @Component({
   selector: 'app-entity-type',
@@ -18,7 +20,7 @@ import { IEntityTypCustomFieldsModel } from '../../models/entity-type-custom-fie
 })
 export class EntityTypeComponent {
   productDialog: boolean = false;
-  
+  canManageEntityType:boolean=false;
   deleteProductDialog: boolean = false;
 
   deleteProductsDialog: boolean = false;
@@ -41,7 +43,9 @@ export class EntityTypeComponent {
     
   constructor(private router:Router,public dialogService: DialogService,
      private messageService: MessageService,
-     private entityService:EntityTypeService,private authService:AuthService) { }
+     private entityService:EntityTypeService,private authService:AuthService,private authState:AuthState) { 
+      this.canManageEntityType=this.authState.GetUserPermission(RolePermission.manageEntityType);
+     }
 
   ngOnInit() {
     this.cols = [
@@ -117,7 +121,7 @@ export class EntityTypeComponent {
   }
   confirmDeleteSelected() {
       this.deleteProductsDialog = false;
-      this.selectedProducts.forEach((x)=>x.isBlocked=true)
+      this.selectedProducts.forEach((x)=>x.isBlocked=!x.isBlocked)
       console.log(this.selectedProducts);
       this.updateCompany(this.selectedProducts);
       this.selectedProducts = [];
@@ -125,7 +129,7 @@ export class EntityTypeComponent {
 
   confirmDelete() {
       this.deleteProductDialog = false;
-      this.product.isBlocked=true;
+      this.product.isBlocked=!this.product.isBlocked;
       this.updateCompany([this.product]);    
       this.product = {} as IEntityTypeModel;
   }
@@ -137,10 +141,7 @@ export class EntityTypeComponent {
   onGlobalFilter(table: Table, event: Event) {
       table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
-  updateCompany(entity:IEntityTypeModel[]){
-    entity.forEach((x)=>{
-      x.isBlocked=true;
-    })
+  updateCompany(entity:IEntityTypeModel[]){   
     this.entityService.deleteEntityType(entity).subscribe((resp)=>{
       this.getEntities();
     })

@@ -3,10 +3,12 @@ import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
+import { RolePermission } from 'src/app/modules/constants/role-permission';
 import { ISelectedCompanyDto } from 'src/app/modules/models/company-selection.model';
 import { IEntityListModel } from 'src/app/modules/models/entity-list.model';
 
 import { AuthService } from 'src/app/modules/service/auth.service';
+import { AuthState } from 'src/app/modules/service/auth.state';
 import { EntityInfoService } from 'src/app/modules/service/entity-info.service';
 import { ScenarioService } from 'src/app/modules/service/scenario.service';
 
@@ -18,7 +20,7 @@ import { ScenarioService } from 'src/app/modules/service/scenario.service';
 })
 export class ScenarioListComponent {
   productDialog: boolean = false;
-  
+  canManageScenarios:boolean=false;
   deleteProductDialog: boolean = false;
 
   deleteProductsDialog: boolean = false;
@@ -41,7 +43,9 @@ export class ScenarioListComponent {
     
   constructor(private router:Router,public dialogService: DialogService,
      private messageService: MessageService,
-     private entityService:ScenarioService,private authService:AuthService) { }
+     private entityService:ScenarioService,private authService:AuthService,private authState:AuthState) { 
+    this.canManageScenarios=this.authState.GetUserPermission(RolePermission.manageScenarioDetails);
+  }
 
   ngOnInit() {
     this.cols = [
@@ -98,7 +102,7 @@ export class ScenarioListComponent {
   }
   confirmDeleteSelected() {
       this.deleteProductsDialog = false;
-      this.selectedProducts.forEach((x)=>x.isBlocked=true)
+      this.selectedProducts.forEach((x)=>x.isBlocked=!x.isBlocked)
       console.log(this.selectedProducts);
       this.updateCompany(this.selectedProducts);
       this.selectedProducts = [];
@@ -106,7 +110,7 @@ export class ScenarioListComponent {
 
   confirmDelete() {
       this.deleteProductDialog = false;
-      this.product.isBlocked=true;
+      this.product.isBlocked=!this.product.isBlocked;
       this.updateCompany([this.product]);    
       this.product = {} as IEntityListModel;
   }
@@ -118,13 +122,10 @@ export class ScenarioListComponent {
   onGlobalFilter(table: Table, event: Event) {
       table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
-  updateCompany(entity:IEntityListModel[]){
-    entity.forEach((x)=>{
-      x.isBlocked=true;
+  updateCompany(entity:IEntityListModel[]){   
+    this.entityService.deleteScenario(entity).subscribe((resp)=>{
+      this.getEntities();
     })
-    // this.entityService.deleteEntityType(entity).subscribe((resp)=>{
-    //   this.getEntities();
-    // })
   }
   onScenarioDetails(product:any){
     this.router.navigate(['scenario/details/'+product.entityId]);

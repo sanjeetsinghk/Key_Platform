@@ -2,9 +2,11 @@ import { Component, Input, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
+import { RolePermission } from 'src/app/modules/constants/role-permission';
 import { EntityTreeModel } from 'src/app/modules/models/entity-tree.model';
 import { ScenarioList } from 'src/app/modules/models/scenario-list.model';
 import { ScenarioDto } from 'src/app/modules/models/scenarioDto';
+import { AuthState } from 'src/app/modules/service/auth.state';
 import { ScenarioService } from 'src/app/modules/service/scenario.service';
 
 @Component({
@@ -15,6 +17,7 @@ import { ScenarioService } from 'src/app/modules/service/scenario.service';
 })
 export class ScenarioComponent {
   @Input() entityTreeData:EntityTreeModel;
+  canManageScenarios:boolean=false;
   Id:number=0;
   EntityTreeId:number=0;
   EntityName:string;
@@ -28,8 +31,10 @@ export class ScenarioComponent {
   constructor(
     private scenarioService:ScenarioService,
     private messageService:MessageService,
-    private router:Router
-  ){}
+    private router:Router,private authState:AuthState
+  ){
+    this.canManageScenarios=this.authState.GetUserPermission(RolePermission.manageScenarioDetails);
+  }
 
   ngOnInit(){
     this.cols = [

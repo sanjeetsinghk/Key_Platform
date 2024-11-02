@@ -10,5 +10,8 @@ export const RolePermission={
     viewScenarioDetails:{id:"9",name:"View scenario details"},
     addPerformanceKPIs:{id:"10",name:"Add Performance KPIs"},
     viewPerformanceKPIs:{id:"11",name:"View performance KPIs"},
-    manageScenarioDetails:{id:"12",name:"Manage scenario details"}
+    manageScenarioDetails:{id:"12",name:"Manage scenario details"},
+    createEntityandEntityNode:{id:"13",name:"Create entity and entity node"},
+    deleteEntity:{id:"14",name:"Delete entity"},
+    deleteEntityNode:{id:"15",name:"Delete entity node"}
 }

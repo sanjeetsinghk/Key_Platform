@@ -38,4 +38,18 @@ export class Utility{
         }
         return null;
     }
+    toFixed(exponentialNumber) {
+        const str = exponentialNumber.toString();
+        if (str.indexOf('.') !== -1) {
+            let splittedVal=str.split('.');
+            const exponent = splittedVal[1].substr(0,4);
+            // Unfortunately I can not return 1e-8 as 0.00000001, because even if I call parseFloat() on it,
+            // it will still return the exponential representation
+            // So I have to use .toFixed()
+            const result = splittedVal[0]+'.'+exponent;
+            return result;
+        } else {
+            return exponentialNumber;
+        }
+    }
 }

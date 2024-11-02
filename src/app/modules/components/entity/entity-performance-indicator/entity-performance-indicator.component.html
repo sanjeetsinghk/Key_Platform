@@ -1,13 +1,17 @@
 <div class="grid p-fluid">
+    <div class="col-12 text-right">
+        <a class="btn btn-clear ml-3" title="Download JSON" [href]="downloadJsonHref" download="download.json">Export Entity Performance</a>  
+    </div>
     <div class="col-12">
-        <p-tree [value]="files" layout="horizontal" 
+        <p-tree [value]="files"  [contextMenu]="cm" layout="horizontal" 
         selectionMode="single" [(selection)]="selectedFiles3"  (onNodeSelect)="nodeSelect($event)" >
         <ng-template let-node pTemplate="default">
-            <b>{{node.data.qty}} {{ node.label }}</b><br/>
+            <b *ngIf="node.data.qty>1">{{node.data.qty}}</b><b> {{ node.label }}</b><br/>
             {{node.data.customlabel}}<br/>
             <label>Total Cost: {{node.data.totalValue}}</label>
         </ng-template>
         </p-tree>
+        <p-contextMenu #cm [model]="menuItems" />
     </div>
     <form [formGroup]="productForm" (ngSubmit)="saveProduct()" class="w-full">
         <div class="col-12">        
@@ -28,14 +32,16 @@
                                     </div>
                                 </ng-template>
                             </th>
-                            <th><p-button icon="pi pi-plus" title="Add New KPI's" severity="success" (click)="addNewMetrics()" /></th>
+                            <th class="text-right"><p-button  icon="pi pi-plus" title="Add New KPI's" severity="success" (click)="addNewMetrics()" /></th>
                         </tr>
                 
                         <ng-container *ngFor="let item of groupArrList().controls; let groupIndex = index">
                             <ng-container [formGroupName]="groupIndex">
                                 <tr class="justify-content-center mt-3">
-                                    <td><input type="text" pInputText class="w-50" formControlName="customName"/></td><td><strong>{{item.value.itemValue}}</strong></td>
-                                    <td><input type="text" pInputText class="w-50" formControlName="precesion"/></td><td></td>
+                                    <td><input type="text" pInputText class="w-50" formControlName="customName"/></td>
+                                    <td><strong>{{item.value.value}}</strong></td>
+                                    <td><input type="text" pInputText class="w-50" formControlName="precesion"/></td>
+                                    <td colspan="2" class="text-right"><p-button  icon="pi pi-trash" title="Delete" severity="danger" (click)="deleteMetrics(groupIndex)" /> </td>
                                 </tr>
                                 <tr>
                                     <td colspan="4" class="dimension">
@@ -63,7 +69,7 @@
                 </ng-container>            
             </p-panel>    
         </div>
-        <div class="grid p-fluid" >
+        <div class="grid p-fluid" *ngIf="canAddKpiPerformance">
             <div class="col-2 justify-content-start">
                 <p-button class="pull-right" label="Save" type="submit"  [raised]="true" severity="success" />                                                
             </div>

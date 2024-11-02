@@ -4,7 +4,10 @@ import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { CustomFieldConstraintList } from 'src/app/modules/constants/custom-field-constraint-list';
 import { CustomFieldTypeList } from 'src/app/modules/constants/custom-field-type-list';
+import { DefaultValues } from 'src/app/modules/constants/default-value';
+import { RolePermission } from 'src/app/modules/constants/role-permission';
 import { IEntityTypCustomFieldsModel } from 'src/app/modules/models/entity-type-custom-fields.model';
+import { AuthState } from 'src/app/modules/service/auth.state';
 import { EntityTypeService } from 'src/app/modules/service/entity-type.service';
 
 @Component({
@@ -16,6 +19,7 @@ import { EntityTypeService } from 'src/app/modules/service/entity-type.service';
 export class EntityTypeCustomFieldsComponent {
   formCustom: FormGroup;
   submitted:boolean=false;
+  canManageEntityType:boolean=false;
   labels:string[] | undefined;
   fieldTypeList:any[]=CustomFieldTypeList;
   fieldConstraintList:any[]=CustomFieldConstraintList;
@@ -27,7 +31,11 @@ export class EntityTypeCustomFieldsComponent {
   product:any;
   @Input() isResetDone:boolean=false;
   @Output() newItemEvent = new EventEmitter<IEntityTypCustomFieldsModel[]>();
-  constructor(private entityService:EntityTypeService, private formBuilder: FormBuilder, public dialogService: DialogService, private messageService: MessageService){}
+  @Output() onSave=new EventEmitter();
+  constructor(private entityService:EntityTypeService, private formBuilder: FormBuilder, public dialogService: DialogService, private messageService: MessageService,private authState:AuthState){
+    this.canManageEntityType=this.authState.GetUserPermission(RolePermission.manageEntityType);
+  }
+  
   ngOnInit(){
     this.cols = [
       { field: 'id', header: 'Id' },
@@ -37,7 +45,7 @@ export class EntityTypeCustomFieldsComponent {
       { field: 'type', header: 'Type' },
       { field: 'constraint', header: 'Constraint' }
   ];
-    this.bindFormGroup(null);
+    
     let data=this.entityService.selectedEntityModel;
     data?.entityCustomFields.forEach((x)=>{
       this.customFields.push({
@@ -47,6 +55,7 @@ export class EntityTypeCustomFieldsComponent {
         ...x
       })
     })
+    this.bindFormGroup(null);
   }
   bindFormGroup(data){
     this.formCustom=this.formBuilder.group(
@@ -59,7 +68,7 @@ export class EntityTypeCustomFieldsComponent {
         constraintValue:[data ? data.constraintValue:''],
         constraintValueList:this.formBuilder.array([]),
         group_name:[data ? data.groupName:''],
-	      sequence:[data ? data.sequence:'']
+	      sequence:[data ? data.sequence:this.getSequence()]
       });
       if(data && data.constraint){
         this.onConstraintChange(JSON.parse(data.fieldConstraint));
@@ -74,6 +83,14 @@ export class EntityTypeCustomFieldsComponent {
 
       }
   }
+  getSequence(){
+    if(this.customFields && this.customFields.length>0){
+      let sequence=[...new Set(this.customFields.map((x)=>x.sequence))];
+      console.log(sequence)
+      return (Math.max(...sequence)+1)
+    }
+    return 1;
+  }
   get constraintValueList() {
     return this.formCustom.controls["constraintValueList"] as FormArray;
   }
@@ -81,8 +98,8 @@ export class EntityTypeCustomFieldsComponent {
     const constraintValueForm = this.formCustom.controls.constraintValueList as FormArray;
     constraintValueForm.push(this.formBuilder.group({
       id:[],
-      name: [data ?data.name:'', Validators.required],
-      value: [data? data.value:'', Validators.required]
+      name: [data ?data.name:this.contraintType==3?DefaultValues.min:'', Validators.required],
+      value: [data? data.value:this.contraintType==3?DefaultValues.max:'', Validators.required]
   }));
    
   }
@@ -119,7 +136,7 @@ export class EntityTypeCustomFieldsComponent {
       formArray.removeAt(0)
     }
   }
-save(){ 
+save(isSaved=false){ 
   this.submitted=true;   
   if(this.formCustom.valid){
     let formValue=this.formCustom.value;
@@ -172,7 +189,12 @@ save(){
         let fields=this.customFields;
         this.customFields.forEach((x,index)=>{
           if(x.id==formValue.id){
-            fields[index]={...data}
+            fields[index]={
+              name:formValue.name,
+              type:formValue.type.name,
+              constraint:formValue.constraint.name,
+              ...data
+            }
           }
         })
         this.customFields=fields;
@@ -208,6 +230,8 @@ save(){
       this.labels=[];
       this.submitted=false;
       this.contraintType=null; 
+      if(isSaved)
+        this.onSave.emit();
     }
   }
 }
@@ -243,5 +267,16 @@ ngOnChanges(){
     this.customFields=[];
     this.clearFormArray(this.constraintValueList);
   }
+}
+handlePasteTwoDigit(e) {
+  var regex = new RegExp(/^\d*(\.\d{0,2})?$/g);
+  if (regex.test(e)) {
+    return true;
+  }
+  return false;
+}
+saveClose(){
+    this.save(true);
+    
 }
 }

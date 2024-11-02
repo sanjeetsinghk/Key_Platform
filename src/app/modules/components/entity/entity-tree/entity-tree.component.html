@@ -3,27 +3,49 @@
     <div class="col-9">
         <p-card header="Entity" class="w-100 w-full">
             <div class="grid p-fluid">            
-                <div class="col-8">       
+                <div class="col-7">       
                     <p-dropdown 
                     appendTo="body" [filter]="true"  filterBy="name" 
                     [showClear]="true" [options]="entityNodeTypeList" optionLabel="name" (onChange)="onEntityNodeTypeSelect($event.value)"
                     placeholder="Select Entity Node Type" autoWidth="true" style="min-width:100%; min-width:10rem;" />
                     
                 </div>
-                <div class="col-1 mt-1">
-                    <p-button  icon="pi pi-plus" severity="success" [rounded]="false" [outlined]="false" class="btnAdd" (click)="addedNode()"/>        
+                <div class="col-1 mt-1" >
+                    <p-button  icon="pi pi-plus" severity="success" [rounded]="false" [outlined]="false" class="btnAdd" (click)="addedNode()"/>                          
                 </div>
-                <div class="col-12">
-                    <p-tree [value]="files" layout="horizontal" 
-                    selectionMode="single" [(selection)]="selectedFiles3"  (onNodeSelect)="nodeSelect($event)" >
+                <div class="col-4 mt-1" >  
+                    <a class="btn btn-clear ml-3" title="Download JSON" [href]="downloadJsonHref" download="entity-tree.json">Export Entity Tree</a>  
+                </div>
+                <div class="col-12 flex">
+                    <p-tree 
+                    class="w-full"
+                    [value]="files"
+                    [contextMenu]="cm"
+                    layout="horizontal" 
+                    [filter]="true" 
+                    selectionMode="single" 
+                    [(selection)]="selectedFiles3" 
+                    (onNodeSelect)="nodeSelect($event)" >
                     <ng-template let-node pTemplate="default">
-                        <b>{{node.data.qty}} {{ node.label }}</b>
-                        <br/>
-                        <input  type="text" id="selectedValue" pInputText [(ngModel)]="node.data.customlabel" />
-                        <label>Total Cost: {{node.data.totalValue}}</label>
+                        <span
+                            pDraggable="treedragdrop"
+                            pDroppable="treedragdrop"
+                            (onDragStart)="onDragStart($event, node)"
+                            (onDragEnd)="onDragEnd($event, node)"
+                            (onDrop)="onDrop($event, node)"
+                            (onDragEnter)="onDragEnter($event, node)"
+                            (onDragLeave)="onDragLeave($event, node)"
+                            [ngClass]="node.children.length>0 ?'has-child':'no-child'">
+                            <b *ngIf="node.data.qty>1">{{node.data.qty}}</b><b> {{ node.label }}</b>
+                            <br/>
+                            <input  type="text" id="selectedValue" pInputText [(ngModel)]="node.data.customlabel" />
+                            <label>Total Cost: {{node.data.totalValue}}</label>
+                        </span>
                     </ng-template>
                     </p-tree>
+                    <p-contextMenu #cm [model]="menuItems" />
                 </div>
+                <p-contextMenu #sim [model]="suggestItems" [global]="true"></p-contextMenu>
                 <div class="col-12 p-fluid">
                     <form [formGroup]="productForm" (ngSubmit)="saveProduct()" *ngIf="showForm">
                         <p-tabView orientation="left" class="w-full">
@@ -81,7 +103,9 @@
                                 <div class="grid">
                                     <div class="col-6">
                                         <label for="dimension1">Dimension 1</label> <strong class="ml-2"> Total: {{dim1val}}</strong>
-                                        <p-autoComplete 
+                                        <p-autoComplete    
+                                        (onFocus)="focusFunction('dimension1')"                                     
+                                        [focusOnShow]="false"
                                         formControlName="dimension1"
                                         [suggestions]="suggestions"
                                         (completeMethod)="search($event)"
@@ -91,7 +115,9 @@
                                     </div>
                                     <div class="col-6">
                                         <label for="dimension2">Dimension 2</label><strong class="ml-2"> Total: {{dim2val}}</strong>
-                                        <p-autoComplete 
+                                        <p-autoComplete     
+                                        (onFocus)="focusFunction('dimension2')"                                     
+                                        [focusOnShow]="false"
                                         formControlName="dimension2"
                                         [suggestions]="suggestions"
                                         (completeMethod)="search($event)"
@@ -100,7 +126,9 @@
                                     </div>
                                     <div class="col-6">
                                         <label for="dimension3">Dimension 3</label><strong class="ml-2"> Total: {{dim3val}}</strong>
-                                        <p-autoComplete 
+                                        <p-autoComplete    
+                                        (onFocus)="focusFunction('dimension3')"                                      
+                                        [focusOnShow]="false"
                                         formControlName="dimension3"
                                         [suggestions]="suggestions"
                                         (completeMethod)="search($event)"
@@ -109,7 +137,9 @@
                                     </div>
                                     <div class="col-6">
                                         <label for="dimension4">Dimension 4</label><strong class="ml-2"> Total: {{dim4val}}</strong>
-                                        <p-autoComplete 
+                                        <p-autoComplete    
+                                        (onFocus)="focusFunction('dimension4')"                                      
+                                        [focusOnShow]="false"
                                         formControlName="dimension4"
                                         [suggestions]="suggestions"
                                         (completeMethod)="search($event)"
@@ -118,7 +148,9 @@
                                     </div>
                                     <div class="col-12">
                                         <label for="dimension5">Dimension 5</label><strong class="ml-2"> Total:  {{dim5val}}</strong>
-                                        <p-autoComplete 
+                                        <p-autoComplete   
+                                        (onFocus)="focusFunction('dimension5')"                                       
+                                        [focusOnShow]="false"
                                         formControlName="dimension5"
                                         [suggestions]="suggestions"
                                         (completeMethod)="search($event)"

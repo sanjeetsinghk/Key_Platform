@@ -1,13 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
+import { RolePermission } from 'src/app/modules/constants/role-permission';
 import { CloneDetails } from 'src/app/modules/models/cloneDetails.model';
 import { ISelectedCompanyDto } from 'src/app/modules/models/company-selection.model';
 import { IEntityListModel } from 'src/app/modules/models/entity-list.model';
 
 import { AuthService } from 'src/app/modules/service/auth.service';
+import { AuthState } from 'src/app/modules/service/auth.state';
 import { EntityInfoService } from 'src/app/modules/service/entity-info.service';
 
 @Component({
@@ -18,7 +20,8 @@ import { EntityInfoService } from 'src/app/modules/service/entity-info.service';
 })
 export class EntityListComponent {
   productDialog: boolean = false;
-  
+  canManageEntityNode:boolean=false;
+  canDeleteEntity:boolean=false;
   deleteProductDialog: boolean = false;
 
   deleteProductsDialog: boolean = false;
@@ -41,7 +44,10 @@ export class EntityListComponent {
     
   constructor(private router:Router,public dialogService: DialogService,
      private messageService: MessageService,
-     private entityService:EntityInfoService,private authService:AuthService) { }
+     private entityService:EntityInfoService,private authService:AuthService,private authState:AuthState) { 
+      this.canManageEntityNode=this.authState.GetUserPermission(RolePermission.manageEntityAndEntityNodeFormula);
+      this.canDeleteEntity=this.authState.GetUserPermission(RolePermission.deleteEntity);
+     }
 
   ngOnInit() {
     this.cols = [
@@ -85,6 +91,7 @@ export class EntityListComponent {
   deleteProduct(product: IEntityListModel) {
       this.deleteProductDialog = true;
       this.product = { ...product };
+
   }
   getSeverity(status: boolean) {
     switch (status) {
@@ -97,8 +104,8 @@ export class EntityListComponent {
     }
   }
   confirmDeleteSelected() {
-      this.deleteProductsDialog = false;
-      this.selectedProducts.forEach((x)=>x.isBlocked=true)
+      this.deleteProductDialog = false;
+      this.selectedProducts.forEach((x)=>x.isBlocked=!x.isBlocked)
       console.log(this.selectedProducts);
       this.updateCompany(this.selectedProducts);
       this.selectedProducts = [];
@@ -106,7 +113,7 @@ export class EntityListComponent {
 
   confirmDelete() {
       this.deleteProductDialog = false;
-      this.product.isBlocked=true;
+      this.product.isBlocked=!this.product.isBlocked;
       this.updateCompany([this.product]);    
       this.product = {} as IEntityListModel;
   }
@@ -118,13 +125,10 @@ export class EntityListComponent {
   onGlobalFilter(table: Table, event: Event) {
       table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
-  updateCompany(entity:IEntityListModel[]){
-    entity.forEach((x)=>{
-      x.isBlocked=true;
+  updateCompany(entity:IEntityListModel[]){   
+    this.entityService.deleteEntity(entity).subscribe((resp)=>{
+      this.getEntities();
     })
-    // this.entityService.deleteEntityType(entity).subscribe((resp)=>{
-    //   this.getEntities();
-    // })
   }
   cloneEntity(product:any){
     console.log(product)
@@ -132,7 +136,9 @@ export class EntityListComponent {
       id:product.id
     }
     this.entityService.cloneEntity(data).subscribe({
-
+      next:(resp)=>{
+        this.getEntities();
+      }
     })
   }
 }

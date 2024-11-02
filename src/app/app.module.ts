@@ -17,9 +17,10 @@ import { ResponsetInterceptor } from './modules/intercept/response.interceptor';
 import { ToastModule } from 'primeng/toast';
 import { ReactiveFormsModule } from '@angular/forms';
 import { GlobalErrorHandlerService } from './modules/service/global-error-handler.service';
+import { TwoDigitDecimaNumberDirective } from './modules/directives/decima-number.directive';
 
 @NgModule({
-    declarations: [AppComponent, NotfoundComponent],
+    declarations: [AppComponent, NotfoundComponent,TwoDigitDecimaNumberDirective],
     imports: [CommonModule,AppRoutingModule, AppLayoutModule,ToastModule,ReactiveFormsModule],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

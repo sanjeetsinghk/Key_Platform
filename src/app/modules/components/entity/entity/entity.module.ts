@@ -38,6 +38,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { CardModule } from 'primeng/card';
 import { EntityPerformanceIndicatorComponent } from '../entity-performance-indicator/entity-performance-indicator.component';
 import { ScenarioComponent } from '../scenario/scenario.component';
+import { ContextMenuModule } from 'primeng/contextmenu';
 
 
 
@@ -80,7 +81,8 @@ import { ScenarioComponent } from '../scenario/scenario.component';
 		TreeTableModule,
         InputGroupModule,
         AutoCompleteModule,
-        CardModule
+        CardModule,
+        ContextMenuModule
     ],
     declarations: [EntityComponent,EntityTreeComponent,
         ProductInfoComponent,

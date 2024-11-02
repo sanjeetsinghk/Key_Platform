@@ -34,7 +34,7 @@ export class EntityNodeComponent {
         }
         this.entityNodeTypeService.getEntityList(data).subscribe({
           next:(resp)=>{
-            this.entityNodeTypeList=resp.resultData;
+            this.entityNodeTypeList=resp.resultData.filter((x)=>!x.isBlocked);
           }
         })
     });

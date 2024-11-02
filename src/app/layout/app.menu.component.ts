@@ -1,6 +1,7 @@
 import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
+import { RoleType } from '../modules/constants/roleEnum';
 
 @Component({
     selector: 'app-menu',
@@ -22,24 +23,25 @@ export class AppMenuComponent implements OnInit {
             },
             {
                 label: 'Admin',
+                role:[RoleType.PlatformAdmin],
                 items: [
-                    { label: 'Manage Roles', icon: 'pi pi-fw pi-user', routerLink: ['/roles'] }
+                    { label: 'Manage Roles', role:[RoleType.PlatformAdmin], icon: 'pi pi-fw pi-user', routerLink: ['/roles'] }
                 ]
             },
             {
                 label: 'Entities',
                 items: [
-                    { label: 'Company', icon: 'pi pi-fw pi-id-card', routerLink: ['/company'] },
-                    { label: 'Users', icon: 'pi pi-user', routerLink: ['/users'] },
-                    { label:'Products', icon: 'pi pi-fw pi-id-card',
+                    { label: 'Company',role:[RoleType.PlatformAdmin], icon: 'pi pi-fw pi-id-card', routerLink: ['/company'] },
+                    { label: 'Users',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin], icon: 'pi pi-user', routerLink: ['/users'] },
+                    { label:'Products',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin,RoleType.EntityDeveloper,RoleType.EntityUser], icon: 'pi pi-fw pi-id-card',
                         items:[
-                           { label: 'Entity', icon: 'pi pi-fw pi-check-square', routerLink: ['/entity']},
-                           { label: 'Entity Type', icon: 'pi pi-fw pi-check-square', routerLink: ['/entitytype']},
-                           { label: 'Entity Node', icon: 'pi pi-fw pi-check-square', routerLink: ['/entitynode']},
-                           { label: 'Entity Node Type', icon: 'pi pi-fw pi-check-square', routerLink: ['/entitynodetype']}
+                           { label: 'Entity',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin,RoleType.EntityDeveloper,RoleType.EntityUser], icon: 'pi pi-fw pi-check-square', routerLink: ['/entity']},
+                           { label: 'Entity Type',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin,RoleType.EntityDeveloper,RoleType.EntityUser], icon: 'pi pi-fw pi-check-square', routerLink: ['/entitytype']},
+                           { label: 'Entity Node',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin,RoleType.EntityDeveloper,RoleType.EntityUser], icon: 'pi pi-fw pi-check-square', routerLink: ['/entitynode']},
+                           { label: 'Entity Node Type',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin,RoleType.EntityDeveloper,RoleType.EntityUser], icon: 'pi pi-fw pi-check-square', routerLink: ['/entitynodetype']}
                         ]
                     },
-                    { label: 'Scenarios', icon: 'pi pi-user', routerLink: ['/scenario'] },
+                    { label: 'Scenarios',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin,RoleType.EntityDeveloper,RoleType.EntityUser], icon: 'pi pi-user', routerLink: ['/scenario'] },
                 ]
             }           
         ];

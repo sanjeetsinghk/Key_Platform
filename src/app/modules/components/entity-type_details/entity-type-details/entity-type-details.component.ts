@@ -2,9 +2,11 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
+import { RolePermission } from 'src/app/modules/constants/role-permission';
 import { IEntityTypCustomFieldsModel } from 'src/app/modules/models/entity-type-custom-fields.model';
 import { IEntityTypeModel } from 'src/app/modules/models/entity-type.model';
 import { AuthService } from 'src/app/modules/service/auth.service';
+import { AuthState } from 'src/app/modules/service/auth.state';
 import { EntityTypeService } from 'src/app/modules/service/entity-type.service';
 
 @Component({
@@ -19,11 +21,12 @@ export class EntityTypeDetailsComponent {
   submitted:boolean=false;
   labels:string[] | undefined;
   customField:IEntityTypCustomFieldsModel[]=[];
-  constructor(private entityTypeService:EntityTypeService, private authService:AuthService,private formBuilder: FormBuilder, public dialogService: DialogService, private messageService: MessageService){}
-  ngOnInit(){
-   
+  canManageEntityType:boolean=false;
+  constructor(private entityTypeService:EntityTypeService, private authService:AuthService,private formBuilder: FormBuilder, public dialogService: DialogService, private messageService: MessageService,private authState:AuthState){}
+  ngOnInit(){   
     let data=this.entityTypeService.selectedEntityModel;
     this.bindForm(data);
+    this.canManageEntityType=this.authState.GetUserPermission(RolePermission.manageEntityType);
   }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
@@ -67,13 +70,14 @@ save(){
     if(value.id==0 || value.id==null){
       data.id=0;
       this.entityTypeService.saveEntityType(data).subscribe((resp)=>{
-        this.form.reset();
+        this.bindForm(resp.resultData)
+       console.log(resp)
       });
     }
     else
     {
       this.entityTypeService.updateEntityType(data).subscribe((resp)=>{
-        this.form.reset();
+        this.bindForm(resp.resultData)
       });
     }
   }

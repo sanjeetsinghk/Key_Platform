@@ -69,15 +69,13 @@ save(){
     if(value.id==0 || value.id==null){
       data.id=0;
       this.entityTypeService.saveEntityType(data).subscribe((resp)=>{
-        this.form.reset();
-        this.labels=[];
+        this.bindForm(resp.resultData);
       });
     }
     else
     {
       this.entityTypeService.updateEntityType(data).subscribe((resp)=>{
-        this.form.reset();
-        this.labels=[];
+        this.bindForm(resp.resultData);
       });
     }
   }

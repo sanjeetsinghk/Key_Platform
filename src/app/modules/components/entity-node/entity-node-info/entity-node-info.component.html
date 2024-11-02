@@ -102,7 +102,7 @@
                         </ng-container>
                     </ng-container>
                 </div>
-                <div class="col-12 justify-content-end">
+                <div class="col-12 justify-content-end" *ngIf="createEntityandEntityNode">
                     <p-button class="pull-right" label="Save" type="submit"  [raised]="true" severity="success" />                    
                     <p-button class="pull-right" label="Cancel" [text]="true" (click)="cancel()" [raised]="true" severity="secondary" />              
                 </div>

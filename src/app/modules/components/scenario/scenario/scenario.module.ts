@@ -40,6 +40,7 @@ import { ScenarioTreeComponent } from '../scenario-tree/scenario-tree.component'
 import { ScenarioInfoComponent } from '../scenario-info/scenario-info.component';
 import { ScenarioListComponent } from '../scenario-list/scenario-list.component';
 import { ScenarioPerformanceIndicatorComponent } from '../scenario-performance-indicator/scenario-performance-indicator.component';
+import { ContextMenuModule } from 'primeng/contextmenu';
 
 
 
@@ -82,7 +83,8 @@ import { ScenarioPerformanceIndicatorComponent } from '../scenario-performance-i
 		TreeTableModule,
         InputGroupModule,
         AutoCompleteModule,
-        CardModule
+        CardModule,
+        ContextMenuModule
     ],
     declarations: [ScenarioComponent,ScenarioTreeComponent,
         ScenarioInfoComponent,

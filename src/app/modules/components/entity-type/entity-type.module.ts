@@ -30,6 +30,7 @@ import { DividerModule } from 'primeng/divider';
 import { EntityTypeCustomFieldsComponent } from '../entity-type_details/entity-type-custom-fields/entity-type-custom-fields.component';
 import { TabViewModule } from 'primeng/tabview';
 import { PanelModule } from 'primeng/panel';
+import { TwoDigitDecimaNumberDirective } from '../../directives/decima-number.directive';
 
 
 @NgModule({

@@ -4,6 +4,7 @@ import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { CustomFieldConstraintList } from 'src/app/modules/constants/custom-field-constraint-list';
 import { CustomFieldTypeList } from 'src/app/modules/constants/custom-field-type-list';
+import { DefaultValues } from 'src/app/modules/constants/default-value';
 import { IEntityNodeTypCustomFieldsModel } from 'src/app/modules/models/entity-node-type-fields.mode';
 import { EntityNodeTypeService } from 'src/app/modules/service/entity-node-type.service';
 
@@ -27,6 +28,7 @@ export class EntityNodeTypeCustomFieldsComponent {
   product:any;
   @Input() isResetDone:boolean=false;
   @Output() newItemEvent = new EventEmitter<IEntityNodeTypCustomFieldsModel[]>();
+  @Output() onSave = new EventEmitter();
   constructor(private entityService:EntityNodeTypeService, private formBuilder: FormBuilder, public dialogService: DialogService, private messageService: MessageService){}
   ngOnInit(){
     this.cols = [
@@ -37,7 +39,7 @@ export class EntityNodeTypeCustomFieldsComponent {
       { field: 'type', header: 'Type' },
       { field: 'constraint', header: 'Constraint' }
   ];
-    this.bindFormGroup(null);
+    
     let data=this.entityService.selectedEntityModel;
     data?.entityNodeTypeFields.forEach((x)=>{
       this.customFields.push({
@@ -47,6 +49,7 @@ export class EntityNodeTypeCustomFieldsComponent {
         ...x
       })
     })
+    this.bindFormGroup(null);
   }
   bindFormGroup(data){
     this.formCustom=this.formBuilder.group(
@@ -59,7 +62,7 @@ export class EntityNodeTypeCustomFieldsComponent {
         constraintValue:[data ? data.constraintValue:''],
         constraintValueList:this.formBuilder.array([]),
         group_name:[data ? data.groupName:''],
-	      sequence:[data ? data.sequence:'']
+	      sequence:[data ? data.sequence:this.getSequence()]
       });
       if(data && data.constraint){
         this.onConstraintChange(JSON.parse(data.fieldConstraint));
@@ -73,6 +76,14 @@ export class EntityNodeTypeCustomFieldsComponent {
         }
       }
   }
+  getSequence(){
+    if(this.customFields && this.customFields.length>0){
+      let sequence=[...new Set(this.customFields.map((x)=>x.sequence))];
+      console.log(sequence)
+      return (Math.max(...sequence)+1)
+    }
+    return 1;
+  }
   get constraintValueList() {
     return this.formCustom.controls["constraintValueList"] as FormArray;
   }
@@ -80,8 +91,8 @@ export class EntityNodeTypeCustomFieldsComponent {
     const constraintValueForm = this.formCustom.controls.constraintValueList as FormArray;
     constraintValueForm.push(this.formBuilder.group({
       id:[],
-      name: [data ?data.name:'', Validators.required],
-      value: [data? data.value:'', Validators.required]
+      name: [data ?data.name:this.contraintType==3?DefaultValues.min:'', Validators.required],
+      value: [data? data.value:this.contraintType==3?DefaultValues.max:'', Validators.required]
   }));
    
   }
@@ -118,7 +129,7 @@ export class EntityNodeTypeCustomFieldsComponent {
       formArray.removeAt(0)
     }
   }
-save(){ 
+save(isSaved=false){ 
   this.submitted=true;   
   if(this.formCustom.valid){
     let formValue=this.formCustom.value;
@@ -170,7 +181,12 @@ save(){
         let fields=this.customFields;
         this.customFields.forEach((x,index)=>{
           if(x.id==formValue.id){
-            fields[index]={...data}
+            fields[index]={
+              name:formValue.name,
+                type:formValue.type.name,
+                constraint:formValue.constraint.name,
+              ...data
+            }
           }
         })
         this.customFields=fields;
@@ -204,6 +220,9 @@ save(){
       this.formCustom.reset();
       this.submitted=false;
       this.contraintType=null; 
+      if(isSaved)
+        this.onSave.emit();
+      this.bindFormGroup(null);
     }
   }
 }
@@ -239,5 +258,8 @@ ngOnChanges(){
     this.customFields=[];
     this.clearFormArray(this.constraintValueList);
   }
+}
+saveDetails(){
+  this.save(true);  
 }
 }

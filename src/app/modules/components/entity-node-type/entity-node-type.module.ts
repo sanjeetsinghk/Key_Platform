@@ -33,6 +33,7 @@ import { EntityNodeTypeComponent } from './entity-node-type.component';
 import { EntityNodeTypeDetailsComponent } from '../entity-node-type_details/entity-node-type-details/entity-node-type-details.component';
 import { EntityNodeTypeRoutingModule } from './entity-node-type-routing.module';
 import { EntityNodeTypeCustomFieldsComponent } from '../entity-node-type_details/entity-node-type-custom-fields/entity-node-type-custom-fields.component';
+import { TwoDigitDecimaNumberDirective } from '../../directives/decima-number.directive';
 
 
 @NgModule({

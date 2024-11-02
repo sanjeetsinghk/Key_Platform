@@ -10,6 +10,8 @@ import { ISelectedCompanyDto } from '../models/company-selection.model';
 import { IEntityNodeTypeModel } from '../models/entity-node-type.model';
 import { EntityInfoModel } from '../models/entity-info.model';
 import { EntityNodeInfoModel } from '../models/entity-node.model';
+import { CloneDetails } from '../models/cloneDetails.model';
+import { IEntityListModel } from '../models/entity-list.model';
 
 @Injectable({
     providedIn:'root'
@@ -56,6 +58,19 @@ export class EntityNodeTypeService {
             })
           );
     }
+    deleteEntityNode(data:IEntityListModel[]):Observable<any>{
+      return this.http.post(environment.apiurl+'entitynode/deleteEntityNode',data).pipe(
+          map((response) => {
+            // prepare the response to be handled, then return
+           return response;
+          }),
+          // if we are setting cookie on server, this is the place to call local server
+          //switchMap((user) => this.SetLocalSession(user)),
+          catchError((error)=>{
+            return throwError(error || 'server error.')
+          })
+        );
+  }
     getEntityList(data:ISelectedCompanyDto):Observable<any>{
         return this.http.post(environment.apiurl+'entitynode/getEntityNodeTypeLists',data).pipe(
             map((response) => {
@@ -107,5 +122,18 @@ export class EntityNodeTypeService {
             return throwError(error || 'server error.')
           })
         );
-  }
+    }
+    cloneEntity(data:CloneDetails):Observable<any>{
+      return this.http.post(environment.apiurl+'entitynode/cloneEntity',data).pipe(
+          map((response) => {
+            // prepare the response to be handled, then return
+           return response;
+          }),
+          // if we are setting cookie on server, this is the place to call local server
+          //switchMap((user) => this.SetLocalSession(user)),
+          catchError((error)=>{
+            return throwError(error || 'server error.')
+          })
+        );
+    }
 }

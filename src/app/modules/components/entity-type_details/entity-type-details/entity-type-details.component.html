@@ -34,7 +34,7 @@
                                             </textarea>
                                         </div>
                                         <div class="col-6">
-                                            <label for="role" class="block text-700 font-medium mb-2">Default Cost Formula</label>
+                                            <label for="role" class="block text-700 font-medium mb-2">Dimension 1</label>
                                             <textarea 
                                                 rows="2"
                                                 cols="30" 
@@ -43,7 +43,7 @@
                                             </textarea>
                                         </div>
                                         <div class="col-6">
-                                            <label for="role" class="block text-700 font-medium mb-2">Default Lead Time Formula</label>
+                                            <label for="role" class="block text-700 font-medium mb-2">Dimension 2</label>
                                             <textarea 
                                                 rows="2"
                                                 cols="30" 
@@ -87,7 +87,7 @@
                                             </p-chips>
                                         </div>
                                     </div>
-                                    <div class="flex  mb-5 gap-1 justify-content-end">
+                                    <div class="flex  mb-5 gap-1 justify-content-end" *ngIf="canManageEntityType">
                                         <p-button class="pull-right" label="Save" type="submit"  [raised]="true" severity="success" />                    
                                             <p-button class="pull-right" label="Cancel" [text]="true" (click)="cancel()" [raised]="true" severity="secondary" />              
                                     </div>
@@ -95,7 +95,7 @@
                             </form>
                         </p-tabPanel>                        
                             <p-tabPanel header="Custom Fields" class="line-height-3 m-0">
-                                <app-entity-type-custom-fields (newItemEvent)="addItem($event)" [isResetDone]="isResetDone"></app-entity-type-custom-fields>
+                                <app-entity-type-custom-fields (onSave)="save()" (newItemEvent)="addItem($event)" [isResetDone]="isResetDone"></app-entity-type-custom-fields>
                             </p-tabPanel>
                     </p-tabView>                    
                 </div>               

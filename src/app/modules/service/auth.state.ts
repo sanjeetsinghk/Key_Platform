@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { IAuthInfo } from '../models/auth.model';
+import { RoleType } from '../constants/roleEnum';
 
 
 // to make a cookie readable in SSR, inject the token from nguniversal module
@@ -83,13 +84,22 @@ export class AuthState {
     return null;
   }
 
-  private _GetUserPermission(permission:string,permissionId:number): boolean {   
+  private _GetUserPermission(checkPermission:any): boolean {   
     const _localuser: IAuthInfo = JSON.parse(localStorage.getItem('user'));
-    let permissions=_localuser.payload.permission;
+    let permissions=_localuser?.payload?.permission;
     if(permissions && permissions.length){
-      return permissions.filter((x)=>(x.permissionId==permissionId || x.permissionName==permission) && x.isAllowed).length>0;
+      return permissions.filter((x)=>(x.permissionId==checkPermission.id || x.permissionName==checkPermission.name) && x.isAllowed).length>0;
     }    
-    return false;
+    return (!permissions || permissions.length==0)?true:false;
+  }
+  private _GetRoleName(roleType:RoleType[]): boolean {   
+    const _localuser: IAuthInfo = JSON.parse(localStorage.getItem('user'));
+    let permissions=_localuser?.payload?.permission;
+    if(permissions && permissions.length){
+      let roleId=[...new Set(permissions.map((x)=>x.roleId))];
+      return roleId.filter((x)=>roleType.some((item)=>item==x)).length>0;
+    }    
+    return (!permissions || permissions.length==0)?true:false;
   }
   // adding cookie saving methods
   private _SetCookie(user: IAuthInfo) {
@@ -130,7 +140,9 @@ export class AuthState {
       return null;
     }
   }
-
+  GetUserPermission(permission:any){
+    return this._GetUserPermission(permission);
+  }
   UpdateSession(user: IAuthInfo) {
     const _localuser: IAuthInfo = this._GetUser();
     if (_localuser) {
@@ -197,5 +209,8 @@ export class AuthState {
     const _auth = this.stateItem.getValue();
     // check if auth is still valid first before you return
     return this.CheckAuth(_auth) ? _auth.refreshToken : null;
+  }
+  GetRoleName(roleType:RoleType[]){
+    return this._GetRoleName(roleType);
   }
 }

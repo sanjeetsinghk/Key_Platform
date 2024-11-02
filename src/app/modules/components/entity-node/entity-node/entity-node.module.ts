@@ -35,6 +35,7 @@ import { EntityNodeComponent } from './entity-node.component';
 import { EntityNodeInfoComponent } from '../entity-node-info/entity-node-info.component';
 import { EntityNodeListComponent } from '../entity-node-list/entity-node-list.component';
 import { EntityNodeRoutingModule } from './entity-node-routing.module';
+import { TwoDigitDecimaNumberDirective } from 'src/app/modules/directives/decima-number.directive';
 
 
 
@@ -79,7 +80,7 @@ import { EntityNodeRoutingModule } from './entity-node-routing.module';
         AutoCompleteModule,
         CardModule
     ],
-    declarations: [        
+    declarations: [                
         EntityNodeComponent,
         EntityNodeInfoComponent,
         EntityNodeListComponent

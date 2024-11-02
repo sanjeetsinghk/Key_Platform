@@ -5,13 +5,15 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { MenuService } from './app.menu.service';
 import { LayoutService } from './service/app.layout.service';
+import { RoleType } from '../modules/constants/roleEnum';
+import { AuthState } from '../modules/service/auth.state';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
     selector: '[app-menuitem]',
     template: `
 		<ng-container>
-            <div *ngIf="root && item.visible !== false" class="layout-menuitem-root-text">{{item.label}}</div>
+            <div *ngIf="root && item.visible !== false && isRoleExist(item?.role)"  class="layout-menuitem-root-text">{{item.label}}</div>
 			<a *ngIf="(!item.routerLink || item.items) && item.visible !== false" [attr.href]="item.url" (click)="itemClick($event)"
 			   [ngClass]="item.class" [attr.target]="item.target" tabindex="0" pRipple>
 				<i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
@@ -30,7 +32,7 @@ import { LayoutService } from './service/app.layout.service';
 
 			<ul *ngIf="item.items && item.visible !== false" [@children]="submenuAnimation">
 				<ng-template ngFor let-child let-i="index" [ngForOf]="item.items">
-					<li app-menuitem [item]="child" [index]="i" [parentKey]="key" [class]="child.badgeClass"></li>
+					<li app-menuitem *ngIf="isRoleExist(child.role)" [item]="child" [index]="i" [parentKey]="key" [class]="child.badgeClass"></li>
 				</ng-template>
 			</ul>
 		</ng-container>
@@ -65,7 +67,7 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
 
     key: string = "";
 
-    constructor(public layoutService: LayoutService, private cd: ChangeDetectorRef, public router: Router, private menuService: MenuService) {
+    constructor(private authState:AuthState,public layoutService: LayoutService, private cd: ChangeDetectorRef, public router: Router, private menuService: MenuService) {
         this.menuSourceSubscription = this.menuService.menuSource$.subscribe(value => {
             Promise.resolve(null).then(() => {
                 if (value.routeEvent) {
@@ -144,5 +146,12 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
         if (this.menuResetSubscription) {
             this.menuResetSubscription.unsubscribe();
         }
+    }
+    isRoleExist(role:RoleType[]){
+        //console.log(role);
+        if(role!==undefined)
+            return this.authState.GetRoleName(role);        
+        else
+            return true;
     }
 }

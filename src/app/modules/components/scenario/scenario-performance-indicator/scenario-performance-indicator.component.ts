@@ -1,6 +1,7 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { FilterService, SelectItemGroup, TreeNode } from 'primeng/api';
+import { DomSanitizer } from '@angular/platform-browser';
+import { FilterService, MenuItem, SelectItemGroup, TreeNode } from 'primeng/api';
 import { SuggestionLists } from 'src/app/modules/constants/suggestions-list';
 import { EntityTreeModel } from 'src/app/modules/models/entity-tree.model';
 import { EntityInfoService } from 'src/app/modules/service/entity-info.service';
@@ -24,14 +25,20 @@ export class ScenarioPerformanceIndicatorComponent {
   selectedFiles3: TreeNode = {};
   productForm:FormGroup;
   fields:any[]=[];
+  menuItems!: MenuItem[];
+  downloadJsonHref:any;
   constructor(
+    private sanitizer:DomSanitizer,
     private entityInfoService:ScenarioService,
     private formBuilder:FormBuilder,
     private utility:Utility,
     private filterService: FilterService){}
 
   ngOnInit(){
-   this.bindProductForm(null)
+   this.bindProductForm(null);
+   this.menuItems = [        
+    { label: 'Remove Node', icon: 'pi pi-times', command: (event) => this.unselectFile() }
+  ];
   }
   bindProductForm(data:any){
     this.productForm=this.formBuilder.group({
@@ -49,6 +56,10 @@ export class ScenarioPerformanceIndicatorComponent {
   }
   addNewMetrics(){
     this.addGroupArrList(null,this.utility.generateGuid());
+  }
+  deleteMetrics(index:number){
+    let data=this.groupArrList() 
+    data.removeAt(index);
   }
   addGroupArrList(item:any,key:string) {
     try{
@@ -82,7 +93,14 @@ export class ScenarioPerformanceIndicatorComponent {
       this.files[0].data?.performanceIndicators?.groupArr?.forEach((item:TreeNode)=>{
         this.addGroupArrList(item,item.key);
       })
+      this.generateDownloadJsonUri();
     }
+  }
+  generateDownloadJsonUri() {
+    var theJSON = JSON.stringify(this.files);
+    console.log(theJSON)
+    var uri = this.sanitizer.bypassSecurityTrustUrl("data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
+    this.downloadJsonHref = uri;
   }
   nodeSelect(event:any){    
     if(event.node?.data?.obj && event.node.data.obj)
@@ -126,7 +144,13 @@ export class ScenarioPerformanceIndicatorComponent {
      let calValue= this.calculateNodesValue(item.calculation);
      console.log(calValue);
      try{
-      item.value=eval(calValue);
+      calValue=this.utility.toFixed(eval(calValue));
+     }
+     catch(err){
+      console.log("try converting the parse float",calValue)
+     }
+     try{
+      item.value=item.precesion?parseFloat(calValue).toPrecision(item.precesion):parseFloat(calValue);
       this.groupArrList().at(index).get("value").setValue(item.value)
      }
      catch(err){
@@ -178,7 +202,35 @@ export class ScenarioPerformanceIndicatorComponent {
   search(event: AutoCompleteCompleteEvent) {
     console.log(event)
     let suggestionLoist=SuggestionLists.map((x)=>{return {label:x,value:x,calculatedValue:x,nodeName:null}})   
-    this.suggestionList =[... [...this.fields,...suggestionLoist,{label:event.query,value:event.query,calculatedValue:event.query,nodeName:null}].filter((x)=>x.label.indexOf(event.query)!=-1)];
+    this.suggestionList =[... [...this.fields,...suggestionLoist,{label:event.query,value:event.query,calculatedValue:event.query,nodeName:null}].filter((x)=>x.label.toLowerCase().indexOf(event.query.toLowerCase())!=-1)];
+  }
+  unselectFile() {
+    console.log(this.selectedFiles3);
+    if(this.files[0]==this.selectedFiles3.key)
+    {
+      this.files=[];
+    }
+    else{
+      this.deleteAndInsertNode(this.files[0])
+    }
+  }
+  deleteAndInsertNode(data:TreeNode){
+    try{
+      if(data.children.filter((x)=>x.key==this.selectedFiles3.key.toString()).length>0){
+        data.children=data.children.filter((x)=>x.key!==this.selectedFiles3.key.toString());        
+        return;
+      }
+      else
+      {
+        data.children.forEach((x)=>{
+          this.deleteAndInsertNode(x)
+        })
+      
+      }
+    }
+    catch(err){
+      console.log(err)
+    }
   }
   cancel(){
 

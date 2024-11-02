@@ -104,6 +104,9 @@ export class AuthService {
 getUserEmail(){
     return this.authState.getUserEmail();
 }
+getUserPermissionCheck(permission:any){
+  return this.authState.GetUserPermission(permission)
+}
 getUserId(){
   return this.authState.getUserId();
 }

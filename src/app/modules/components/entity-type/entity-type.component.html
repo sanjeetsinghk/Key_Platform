@@ -6,7 +6,7 @@
                 <h3 class="m-0">Entity Type</h3>
             </div>
             <p-toast/>
-            <p-toolbar styleClass="mb-4">
+            <p-toolbar styleClass="mb-4" *ngIf="canManageEntityType">
                 <ng-template pTemplate="left">
                     <div class="my-2">
                         <button pButton pRipple label="Add Entity" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
@@ -32,9 +32,9 @@
                         <th style="width: 3rem">
                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                         </th>
-                        <th>Id <p-sortIcon field="id"></p-sortIcon></th>
+                        <th>Id</th>
                         <th pSortableColumn="name">Type <p-sortIcon field="name"></p-sortIcon></th>
-                        <th pSortableColumn="fields">Fields <p-sortIcon field="fields"></p-sortIcon></th>
+                        <th pSortableColumn="fields">Fields</th>
                         <th pSortableColumn="description">Description <p-sortIcon field="description"></p-sortIcon></th>
                         <th pSortableColumn="isBlocked">Is Blocked <p-sortIcon field="isBlocked"></p-sortIcon></th>                                               
                         
@@ -72,7 +72,7 @@
                         <td>
                             <div class="flex">
                                 <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editProduct(product)"></button>
-                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteProduct(product)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteProduct(product)"  *ngIf="canManageEntityType"></button>
                             </div>
                         </td>
                     </tr>
@@ -83,7 +83,7 @@
         <p-dialog [(visible)]="deleteProductsDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
             <div class="flex align-items-center justify-content-center">
                 <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                <span>Are you sure you want to delete selected Entities?</span>
+                <span>Are you sure you want to Block/Un-Block selected Entities?</span>
             </div>
             <ng-template pTemplate="footer">
                 <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteProductsDialog = false"></button>
@@ -93,7 +93,7 @@
         <p-dialog [(visible)]="deleteProductDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
             <div class="flex align-items-center justify-content-center">
                 <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                <span *ngIf="product">Are you sure you want to delete <b>{{product.name}}</b>?</span>
+                <span *ngIf="product">Are you sure you want to {{product.isBlocked?'Un-Block':'Blocked'}} <b>{{product.name}}</b>?</span>
             </div>
             <ng-template pTemplate="footer">
                 <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteProductDialog = false"></button>

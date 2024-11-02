@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angu
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
+import { RolePermission } from 'src/app/modules/constants/role-permission';
 import { ISelectedCompanyDto } from 'src/app/modules/models/company-selection.model';
 import { IEntityInfoDetails } from 'src/app/modules/models/entity-info-details.model';
 import { EntityInfoModel } from 'src/app/modules/models/entity-info.model';
@@ -9,6 +10,7 @@ import { IEntityNodeTypeModel } from 'src/app/modules/models/entity-node-type.mo
 import { EntityNodeInfoModel } from 'src/app/modules/models/entity-node.model';
 import { IEntityTypeModel } from 'src/app/modules/models/entity-type.model';
 import { AuthService } from 'src/app/modules/service/auth.service';
+import { AuthState } from 'src/app/modules/service/auth.state';
 import { EntityInfoService } from 'src/app/modules/service/entity-info.service';
 import { EntityNodeTypeService } from 'src/app/modules/service/entity-node-type.service';
 import { EntityTypeService } from 'src/app/modules/service/entity-type.service';
@@ -23,11 +25,12 @@ import { Utility } from 'src/app/modules/utility/utility';
 export class EntityNodeInfoComponent {
   productForm:FormGroup;
   productFormArr:FormGroup;
+  createEntityandEntityNode:boolean=false;
   @Input() entityNodeTypeList:IEntityTypeModel[];
   @Output() savedProductEvent = new EventEmitter<EntityInfoModel>();
   @Input() selectedProduct:EntityInfoModel;
-  constructor(private cdr:ChangeDetectorRef,private utility:Utility,private authService:AuthService,private entityInfoService:EntityInfoService,private entityNodeTypeService:EntityNodeTypeService,private formBuilder: FormBuilder){
-    
+  constructor(private cdr:ChangeDetectorRef,private utility:Utility,private authService:AuthService,private entityInfoService:EntityInfoService,private entityNodeTypeService:EntityNodeTypeService,private formBuilder: FormBuilder,private authState:AuthState){
+    this.createEntityandEntityNode=this.authState.GetUserPermission(RolePermission.createEntityandEntityNode);
   }
   labels:any;
   productTypeList:IEntityTypeModel[]=[];

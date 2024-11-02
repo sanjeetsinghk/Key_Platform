@@ -95,7 +95,7 @@
                             </form>
                         </p-tabPanel>                        
                             <p-tabPanel header="Custom Fields" class="line-height-3 m-0">
-                                <app-entity-node-type-custom-fields (newItemEvent)="addItem($event)" [isResetDone]="isResetDone"></app-entity-node-type-custom-fields>
+                                <app-entity-node-type-custom-fields (onSave)="save()" (newItemEvent)="addItem($event)" [isResetDone]="isResetDone"></app-entity-node-type-custom-fields>
                             </p-tabPanel>
                     </p-tabView>                    
                 </div>               

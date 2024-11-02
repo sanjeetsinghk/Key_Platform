@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RolePermission } from 'src/app/modules/constants/role-permission';
 import { ISelectedCompanyDto } from 'src/app/modules/models/company-selection.model';
 
 import { EntityInfoModel } from 'src/app/modules/models/entity-info.model';
@@ -7,6 +8,7 @@ import { IEntityNodeTypeModel } from 'src/app/modules/models/entity-node-type.mo
 import { EntityTreeModel } from 'src/app/modules/models/entity-tree.model';
 import { IEntityTypeModel } from 'src/app/modules/models/entity-type.model';
 import { AuthService } from 'src/app/modules/service/auth.service';
+import { AuthState } from 'src/app/modules/service/auth.state';
 import { EntityInfoService } from 'src/app/modules/service/entity-info.service';
 import { EntityNodeTypeService } from 'src/app/modules/service/entity-node-type.service';
 import { EntityTypeService } from 'src/app/modules/service/entity-type.service';
@@ -22,7 +24,8 @@ export class EntityComponent {
   entityId:number;
   entityTypeList:IEntityTypeModel[];
   entityTreeData:EntityTreeModel;
-  constructor(private entityTypeService:EntityTypeService,private authService:AuthService,private entityNodeTypeService:EntityNodeTypeService,private entityInfoService:EntityInfoService,private router:Router,private activeRouter:ActivatedRoute){
+  canManageEntityNode:boolean=false;
+  constructor(private authState:AuthState,private entityTypeService:EntityTypeService,private authService:AuthService,private entityNodeTypeService:EntityNodeTypeService,private entityInfoService:EntityInfoService,private router:Router,private activeRouter:ActivatedRoute){
     this.activeRouter.params.subscribe(result =>
       {          
         this.entityId=result["id"];
@@ -34,10 +37,11 @@ export class EntityComponent {
         }
         this.entityNodeTypeService.getEntityNodeLists(data).subscribe({
           next:(resp)=>{
-            this.entityNodeTypeList=resp.resultData;
+            this.entityNodeTypeList=resp.resultData.filter((x)=>!x.isBlocked);
           }
         })
     });
+    this.canManageEntityNode=this.authState.GetUserPermission(RolePermission.manageEntityAndEntityNodeFormula);
   }
   ngOnInit(){
     
@@ -49,7 +53,7 @@ export class EntityComponent {
     }
     this.entityTypeService.getEntityList(data).subscribe({
       next:(resp)=>{
-        this.entityTypeList=resp.resultData;
+        this.entityTypeList=resp.resultData.filter((x)=>!x.isBlocked);
         if(this.entityId){
           this.entityInfoService.getEntityInfo(this.entityId).subscribe({
             next:(resp)=>{
