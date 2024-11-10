@@ -18,10 +18,13 @@ import { ToastModule } from 'primeng/toast';
 import { ReactiveFormsModule } from '@angular/forms';
 import { GlobalErrorHandlerService } from './modules/service/global-error-handler.service';
 import { TwoDigitDecimaNumberDirective } from './modules/directives/decima-number.directive';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserModule } from '@angular/platform-browser';
 
 @NgModule({
     declarations: [AppComponent, NotfoundComponent,TwoDigitDecimaNumberDirective],
-    imports: [CommonModule,AppRoutingModule, AppLayoutModule,ToastModule,ReactiveFormsModule],
+    imports: [BrowserModule,BrowserAnimationsModule,CommonModule,AppRoutingModule, AppLayoutModule,ToastModule,ReactiveFormsModule],
+    exports:[TwoDigitDecimaNumberDirective],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,

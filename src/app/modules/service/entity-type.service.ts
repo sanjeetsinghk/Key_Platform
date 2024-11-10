@@ -55,17 +55,29 @@ export class EntityTypeService {
           );
     }
     getEntityList(data:ISelectedCompanyDto):Observable<any>{
-        return this.http.post(environment.apiurl+'entitytype/getEntityLists',data).pipe(
-            map((response) => {
-              // prepare the response to be handled, then return
-             return response;
-            }),
-            // if we are setting cookie on server, this is the place to call local server
-            //switchMap((user) => this.SetLocalSession(user)),
-            catchError((error)=>{
-              return throwError(error || 'server error.')
-            })
-          );
-    }
-    
+      return this.http.post(environment.apiurl+'entitytype/getEntityLists',data).pipe(
+          map((response) => {
+            // prepare the response to be handled, then return
+            return response;
+          }),
+          // if we are setting cookie on server, this is the place to call local server
+          //switchMap((user) => this.SetLocalSession(user)),
+          catchError((error)=>{
+            return throwError(error || 'server error.')
+          })
+        );
+  }
+  getEntityTypeById(data:ISelectedCompanyDto):Observable<any>{
+      return this.http.post(environment.apiurl+'entitytype/getEntityTypeById',data).pipe(
+          map((response) => {
+            // prepare the response to be handled, then return
+          return response;
+          }),
+          // if we are setting cookie on server, this is the place to call local server
+          //switchMap((user) => this.SetLocalSession(user)),
+          catchError((error)=>{
+            return throwError(error || 'server error.')
+          })
+        );
+  }
 }

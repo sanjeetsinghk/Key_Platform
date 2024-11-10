@@ -72,7 +72,7 @@
                                                 <label for="selectedValue">{{arrItem.value.fieldName}}</label>
                                                 <ng-container *ngIf="arrItem.value.elementType=='Text'">
                                                     <input *ngIf="arrItem.value.attributeType=='Required'" type="text" id="selectedValue" pInputText formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
-                                                    <p-inputNumber *ngIf="arrItem.value.attributeType=='Range'"  [min]="arrItem.value.attributeValues.min" [max]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                    <type="text" pInputText *ngIf="arrItem.value.attributeType=='Range'"  [minlength]="arrItem.value.attributeValues.min" [maxlength]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
                                                     <small id="username-help" *ngIf="arrItem.value.attributeType=='Range'">
                                                        Range should be selected in between {{arrItem.value.attributeValues.min}} to {{arrItem.value.attributeValues.max}}
                                                     </small>
@@ -83,8 +83,12 @@
                                                         placeholder="Select Option" autoWidth="false" class="w-100 w-full md:w-30rem" />
                                                 </ng-container>
                                                 <ng-container *ngIf="arrItem.value.elementType=='Number'">
-                                                    <input type="number" *ngIf="arrItem.value.attributeType=='Required'" id="selectedValue" pInputText formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
-                                                    <p-inputNumber *ngIf="arrItem.value.attributeType=='Range'"  [min]="arrItem.value.attributeValues.min" [max]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                    <input type="number"                                                   
+                                                    placeholder="0.00"
+                                                    step=".01" pInputText *ngIf="arrItem.value.attributeType=='Required'" id="selectedValue" pInputText formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                    <input type="number"                                                   
+                                                    placeholder="0.00"
+                                                    step=".01" pInputText *ngIf="arrItem.value.attributeType=='Range'"  [min]="arrItem.value.attributeValues.min" [max]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
                                                     <small id="username-help" *ngIf="arrItem.value.attributeType=='Range'">
                                                        Range should be selected in between {{arrItem.value.attributeValues.min}} to {{arrItem.value.attributeValues.max}}
                                                     </small>

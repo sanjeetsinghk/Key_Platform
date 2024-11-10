@@ -3,7 +3,7 @@
         <div class="card px-6 py-6 w-full">           
             <div class="grid">            
                 <div class="ml-1 col-12 flex">
-                    <p-tabView orientation="left" class="w-full">
+                    <p-tabView orientation="left" class="w-full" *ngIf="showForm">
                         <p-tabPanel header="Entity Details" class="line-height-3 m-0 w-full">
                             <form [formGroup]="form" (ngSubmit)="save()">
                                 <div class="p-fluid">

@@ -22,12 +22,12 @@
                     layout="horizontal" 
                     selectionMode="single" [(selection)]="selectedFiles3"  (onNodeSelect)="nodeSelect($event)" >
                     <ng-template let-node pTemplate="default">
-                        <b *ngIf="node.data.qty>1">{{node.data.qty}} {{ node.label }}</b>
-                        <br/>
-                        <input  type="text" id="selectedValue" pInputText [(ngModel)]="node.data.customlabel" />
-                        <label>Total Cost: {{node.data.totalValue}}</label>
+                        <b *ngIf="node.data.qty>1">{{node.data.qty}}</b>
+                        <b class="tree-node-text"> {{ node.label }}</b>
+                        <p-button  icon="pi pi-bars" label="Dimensions" [rounded]="true" [text]="true"  (click)="menu.toggle($event)"/>
                     </ng-template>
                     </p-tree>
+                    <p-menu #menu id="config_menu" [model]="dimensionList" [popup]="true" />
                     <p-contextMenu #cm [model]="menuItems" />
                 </div>
                 <p-contextMenu #sim [model]="suggestItems" [global]="true"></p-contextMenu>
@@ -50,7 +50,7 @@
                                                                     <label for="selectedValue">{{arrItem.value.fieldName}}</label>
                                                                     <ng-container *ngIf="arrItem.value.elementType=='Text'">
                                                                         <input *ngIf="arrItem.value.attributeType=='Required'" type="text" id="selectedValue" pInputText formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
-                                                                        <p-inputNumber *ngIf="arrItem.value.attributeType=='Range'"  [min]="arrItem.value.attributeValues.min" [max]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                                        <input type="text" pInputText *ngIf="arrItem.value.attributeType=='Range'"  [minlength]="arrItem.value.attributeValues.min" [maxlength]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
                                                                         <small id="username-help" *ngIf="arrItem.value.attributeType=='Range'">
                                                                         Range should be selected in between {{arrItem.value.attributeValues.min}} to {{arrItem.value.attributeValues.max}}
                                                                         </small>
@@ -61,8 +61,12 @@
                                                                             placeholder="Select Option" autoWidth="false" class="w-100 w-full md:w-30rem" />
                                                                     </ng-container>
                                                                     <ng-container *ngIf="arrItem.value.elementType=='Number'">
-                                                                        <input type="number" *ngIf="arrItem.value.attributeType=='Required'" id="selectedValue" pInputText formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
-                                                                        <p-inputNumber *ngIf="arrItem.value.attributeType=='Range'"  [min]="arrItem.value.attributeValues.min" [max]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                                        <input type="number"                                                   
+                                                                            placeholder="0.00"
+                                                                            step=".01" pInputText  *ngIf="arrItem.value.attributeType=='Required'" id="selectedValue" pInputText formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                                                                <input type="number"                                                   
+                                                                            placeholder="0.00"
+                                                                            step=".01" pInputText  *ngIf="arrItem.value.attributeType=='Range'"  [min]="arrItem.value.attributeValues.min" [max]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
                                                                         <small id="username-help" *ngIf="arrItem.value.attributeType=='Range'">
                                                                         Range should be selected in between {{arrItem.value.attributeValues.min}} to {{arrItem.value.attributeValues.max}}
                                                                         </small>
@@ -86,6 +90,9 @@
                             </p-tabPanel>
                             <p-tabPanel header="Calculations" class="line-height-3 m-0 w-full dimension">
                                 <div class="grid">
+                                    <div class="col-12 text-right">
+                                        <app-view-math-docs></app-view-math-docs>
+                                    </div>
                                     <div class="col-6">
                                         <label for="dimension1">Dimension 1</label> <strong class="ml-2"> Total: {{dim1val}}</strong>
                                         <p-autoComplete 

@@ -18,6 +18,7 @@ import { AuthGuard } from './modules/service/auth.guard';
                     { path: 'entitytype',canActivate: [AuthGuard], loadChildren: () => import('./modules/components/entity-type/entity-type.module').then(m => m.EntityTypeModule) },
                     { path: 'entitynode',canActivate: [AuthGuard], loadChildren: () => import('./modules/components/entity-node/entity-node/entity-node.module').then(m => m.EntityNodeModule) },
                     { path: 'entitynodetype',canActivate: [AuthGuard], loadChildren: () => import('./modules/components/entity-node-type/entity-node-type.module').then(m => m.EntityNodeTypeModule) },
+                    { path: 'entitynodecomponent',canActivate: [AuthGuard], loadChildren: () => import('./modules/components/entity-node-component/entity-node-component.module').then(m => m.EntityNodeComponentModule) },
                     { path: 'scenario',canActivate: [AuthGuard], loadChildren: () => import('./modules/components/scenario/scenario/scenario.module').then(m =>m.ScenarioModule) },
                 ]
             },

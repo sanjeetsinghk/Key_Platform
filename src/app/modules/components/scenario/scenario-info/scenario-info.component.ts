@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { ISelectedCompanyDto } from 'src/app/modules/models/company-selection.model';
@@ -24,11 +25,13 @@ export class ScenarioInfoComponent {
   @Output() savedProductEvent = new EventEmitter<ScenarioInfoModel>();
   @Input() selectedProduct:ScenarioInfoModel;
   constructor(
+    private router:Router,
     private cdr:ChangeDetectorRef,
     private utility:Utility,
     private authService:AuthService,
     private entityInfoService:ScenarioService,    
-    private formBuilder: FormBuilder){
+    private formBuilder: FormBuilder,
+    private messageService:MessageService){
     
   }
   labels:any;
@@ -51,6 +54,9 @@ export class ScenarioInfoComponent {
       allowProductCloning:[data !=null ? data?.allowProductCloning:true],
       groupArr:this.formBuilder.array([])
     })
+    if(data?.id){
+      this.productForm.get("productType").disable();
+    }
     if(data && data!=null){
       const orderPriority = data.scenarioInfoDetailsList
       .map(o => o.groupName)
@@ -106,7 +112,7 @@ export class ScenarioInfoComponent {
       elementType:[elementType],
       attributeType:[attributeType],
       attributeValues:[attributeValues],
-      selectedValue:[this.utility.isContainJson(data.selectedValue)?JSON.parse(data.selectedValue):data.selectedValue,attributeType=='required'?Validators.required:null]
+      selectedValue:[this.utility.isContainJson(data.selectedValue)?JSON.parse(data.selectedValue):data.selectedValue,attributeType=='Required'?[Validators.required]:elementType=='Number' && attributeType =='Range'? [Validators.min(attributeValues.min),Validators.max(attributeValues.max)]:[]]
     }));
   }
   get f(): { [key: string]: AbstractControl } {
@@ -192,7 +198,7 @@ export class ScenarioInfoComponent {
         dimension4:value?.dimension4,
         dimension5:value?.dimension5,
         baseCode:value.baseCode,
-        entityTypeId:value.productType.id,
+        entityTypeId: this.selectedProduct ?this.selectedProduct.entityTypeId:value.productType.id,
         isBlocked:false,
         allowProductCloning:value.allowProductCloning,
         scenarioInfoDetailsList:groupArrItems
@@ -207,6 +213,10 @@ export class ScenarioInfoComponent {
       
       console.log(data);
     }
+    else
+    {
+      this.messageService.add({ severity: 'error', summary: 'Please fill or select the mandatory fields', detail: null });
+    }
   }
   ngOnChanges(){
     if(this.selectedProduct){
@@ -216,6 +226,6 @@ export class ScenarioInfoComponent {
     }
   }
   cancel(){
-    this.productForm.reset();
+    this.router.navigate(['scenario']);
   }
 }

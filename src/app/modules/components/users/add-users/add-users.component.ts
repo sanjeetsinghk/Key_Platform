@@ -7,6 +7,7 @@ import { IUser } from 'src/app/modules/models/user.model';
 import { UserDto } from 'src/app/modules/models/userDto.model';
 import { CompanyService } from 'src/app/modules/service/company.service';
 import { CountryService } from 'src/app/modules/service/country.service';
+import { UserService } from 'src/app/modules/service/user.service';
 
 @Component({
   selector: 'app-add-users',
@@ -29,7 +30,8 @@ export class AddUsersComponent {
       private companyService: CompanyService,
       private dialogService: DialogService, private ref: DynamicDialogRef,
       private dialogConfig: DynamicDialogConfig,
-      private _countryService:CountryService
+      private _countryService:CountryService,
+      private userService:UserService
       ) { }
   ngOnInit(){
     console.log(this.dialogConfig.data)
@@ -57,8 +59,9 @@ export class AddUsersComponent {
         });
       this.isLoaded=true;
       if(this.data){
-        this.form.get('company_name').disable();
-        this.form.get('role').disable(); 
+        // this.form.get('company_name').disable();
+        // this.form.get('role').disable();
+        this.form.get('user_email').disable(); 
       }
     })
    
@@ -80,16 +83,16 @@ export class AddUsersComponent {
       id:this.data?.id?this.data.id:0,
       companyId:data.company_name.code,      
       companyName:data.company_name.name,
-      email:data.user_email,      
+      email:this.data ?this.data.email:data.user_email,      
       isBlocked:data.isBlocked,      
       externalId:data.externalId,
       roleId:data.role.code,
       isInvited:true
     }
     if(this.data){
-      // this.companyService.updateCompany([company]).subscribe((resp)=>{
-      //   this.ref.close();
-      // })
+      this.userService.DeleteUser([company]).subscribe((resp)=>{
+        this.ref.close(true);
+      })
     }
     else
     {

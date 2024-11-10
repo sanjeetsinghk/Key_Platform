@@ -22,26 +22,15 @@ import { DialogModule } from 'primeng/dialog';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TagModule } from 'primeng/tag';
+
+
 import { ChipsModule } from 'primeng/chips';
 import { DividerModule } from 'primeng/divider';
+
 import { TabViewModule } from 'primeng/tabview';
 import { PanelModule } from 'primeng/panel';
-import { EntityComponent } from './entity.component';
-import { EntityTreeComponent } from '../entity-tree/entity-tree.component';
-import { EntityRoutingModule } from './entity-routing.module';
-import { ProductInfoComponent } from '../product-info/product-info.component';
-import { TreeModule } from 'primeng/tree';
-import { TreeTableModule } from 'primeng/treetable';
-import { EntityListComponent } from '../entity-list/entity-list.component';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { CardModule } from 'primeng/card';
-import { EntityPerformanceIndicatorComponent } from '../entity-performance-indicator/entity-performance-indicator.component';
-import { ScenarioComponent } from '../scenario/scenario.component';
-import { ContextMenuModule } from 'primeng/contextmenu';
-import { ViewMathDocsComponent } from '../../shared/view-math-docs/view-math-docs.component';
-import { ViewMatchDocsModule } from '../../shared/view-math-docs/view-math-docs.component.module';
-
+import { EntityNodeComponent } from './entity-node-component.component';
+import { EntityNodeComponentRoutingModule } from './entity-node-component-routing.module';
 
 
 @NgModule({
@@ -78,21 +67,8 @@ import { ViewMatchDocsModule } from '../../shared/view-math-docs/view-math-docs.
         DividerModule,
         TabViewModule,
         PanelModule,
-        EntityRoutingModule,
-        TreeModule,
-		TreeTableModule,
-        InputGroupModule,
-        AutoCompleteModule,
-        CardModule,
-        ContextMenuModule,
-        ViewMatchDocsModule
+        EntityNodeComponentRoutingModule
     ],
-    declarations: [EntityComponent,EntityTreeComponent,
-        ProductInfoComponent,
-        EntityListComponent,
-        EntityPerformanceIndicatorComponent,
-        ScenarioComponent
-        
-    ]
+    declarations: [EntityNodeComponent]
 })
-export class EntityModule { }
+export class EntityNodeComponentModule { }

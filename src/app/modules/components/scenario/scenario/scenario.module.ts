@@ -41,6 +41,8 @@ import { ScenarioInfoComponent } from '../scenario-info/scenario-info.component'
 import { ScenarioListComponent } from '../scenario-list/scenario-list.component';
 import { ScenarioPerformanceIndicatorComponent } from '../scenario-performance-indicator/scenario-performance-indicator.component';
 import { ContextMenuModule } from 'primeng/contextmenu';
+import { ViewMathDocsComponent } from '../../shared/view-math-docs/view-math-docs.component';
+import { ViewMatchDocsModule } from '../../shared/view-math-docs/view-math-docs.component.module';
 
 
 
@@ -84,13 +86,15 @@ import { ContextMenuModule } from 'primeng/contextmenu';
         InputGroupModule,
         AutoCompleteModule,
         CardModule,
-        ContextMenuModule
+        ContextMenuModule,
+        ViewMatchDocsModule
     ],
     declarations: [ScenarioComponent,ScenarioTreeComponent,
         ScenarioInfoComponent,
         ScenarioListComponent,
         ScenarioPerformanceIndicatorComponent,
         ScenarioComponent
+        
     ]
 })
 export class ScenarioModule { }

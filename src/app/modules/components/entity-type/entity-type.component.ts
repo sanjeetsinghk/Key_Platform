@@ -100,7 +100,7 @@ export class EntityTypeComponent {
   editProduct(product: IEntityTypeModel) {
       this.product = { ...product };      
       this.entityService.selectedEntityModel=product;
-      this.router.navigate(['entitytype/details']);
+      this.router.navigate(['entitytype/details/'+product.id]);
       console.log(this.product)
     
   }

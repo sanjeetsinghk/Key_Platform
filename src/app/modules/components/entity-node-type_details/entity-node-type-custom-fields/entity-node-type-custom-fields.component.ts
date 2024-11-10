@@ -6,6 +6,7 @@ import { CustomFieldConstraintList } from 'src/app/modules/constants/custom-fiel
 import { CustomFieldTypeList } from 'src/app/modules/constants/custom-field-type-list';
 import { DefaultValues } from 'src/app/modules/constants/default-value';
 import { IEntityNodeTypCustomFieldsModel } from 'src/app/modules/models/entity-node-type-fields.mode';
+import { IEntityNodeTypeModel } from 'src/app/modules/models/entity-node-type.model';
 import { EntityNodeTypeService } from 'src/app/modules/service/entity-node-type.service';
 
 @Component({
@@ -27,6 +28,7 @@ export class EntityNodeTypeCustomFieldsComponent {
   rowsPerPageOptions = [5, 10, 20];
   product:any;
   @Input() isResetDone:boolean=false;
+  @Input() selectedEntityModel:IEntityNodeTypeModel;
   @Output() newItemEvent = new EventEmitter<IEntityNodeTypCustomFieldsModel[]>();
   @Output() onSave = new EventEmitter();
   constructor(private entityService:EntityNodeTypeService, private formBuilder: FormBuilder, public dialogService: DialogService, private messageService: MessageService){}
@@ -40,15 +42,7 @@ export class EntityNodeTypeCustomFieldsComponent {
       { field: 'constraint', header: 'Constraint' }
   ];
     
-    let data=this.entityService.selectedEntityModel;
-    data?.entityNodeTypeFields.forEach((x)=>{
-      this.customFields.push({
-        name:x.fieldName,
-        type: JSON.parse(x.fieldType).name,
-        constraint:JSON.parse(x.fieldConstraint).name,
-        ...x
-      })
-    })
+    
     this.bindFormGroup(null);
   }
   bindFormGroup(data){
@@ -225,6 +219,10 @@ save(isSaved=false){
       this.bindFormGroup(null);
     }
   }
+  else if(this.customFields && this.customFields.length>0){
+    this.submitted=false;
+    this.onSave.emit();
+  }
 }
 editProduct(product: any) {
   this.product = { ...product };
@@ -242,7 +240,7 @@ deleteProduct(product: any) {
   else{
     this.customFields.forEach(element => {
       if(element.name==product.name){
-        element.isBlocked=true;
+        element.isBlocked=!element.isBlocked;
       }
     });
   }
@@ -258,6 +256,20 @@ ngOnChanges(){
     this.customFields=[];
     this.clearFormArray(this.constraintValueList);
   }
+  if(this.selectedEntityModel){
+    let data=this.selectedEntityModel;
+    data?.entityNodeTypeFields.forEach((x)=>{
+      this.customFields.push({
+        name:x.fieldName,
+        type: JSON.parse(x.fieldType).name,
+        constraint:JSON.parse(x.fieldConstraint).name,
+        ...x
+      })
+    })
+  }
+}
+ngAfterViewInit(){
+  
 }
 saveDetails(){
   this.save(true);  

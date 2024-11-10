@@ -230,9 +230,14 @@ save(isSaved=false){
       this.labels=[];
       this.submitted=false;
       this.contraintType=null; 
+      this.bindFormGroup(null);
       if(isSaved)
         this.onSave.emit();
     }
+  }
+  else if(this.customFields && this.customFields.length>0){
+    this.submitted=false;
+    this.onSave.emit();
   }
 }
 editProduct(product: any) {
@@ -251,7 +256,7 @@ deleteProduct(product: any) {
   else{
     this.customFields.forEach(element => {
       if(element.name==product.name){
-        element.isBlocked=true;
+        element.isBlocked=!element.isBlocked;
       }
     });
   }

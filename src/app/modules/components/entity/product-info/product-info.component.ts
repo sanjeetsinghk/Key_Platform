@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { ISelectedCompanyDto } from 'src/app/modules/models/company-selection.model';
@@ -24,7 +25,7 @@ export class ProductInfoComponent {
   @Input() entityTypeList:IEntityTypeModel[];
   @Output() savedProductEvent = new EventEmitter<EntityInfoModel>();
   @Input() selectedProduct:EntityInfoModel;
-  constructor(private cdr:ChangeDetectorRef,private utility:Utility,private authService:AuthService,private entityInfoService:EntityInfoService,private entityTypeService:EntityTypeService,private formBuilder: FormBuilder){
+  constructor(private router:Router,private messageService:MessageService,private cdr:ChangeDetectorRef,private utility:Utility,private authService:AuthService,private entityInfoService:EntityInfoService,private entityTypeService:EntityTypeService,private formBuilder: FormBuilder){
     
   }
   labels:any;
@@ -47,6 +48,9 @@ export class ProductInfoComponent {
       allowProductCloning:[ data !=null ? data?.allowProductCloning: true],
       groupArr:this.formBuilder.array([])
     })
+    if(data?.id){
+      this.productForm.get("productType").disable();
+    }
     if(data && data!=null){
       const orderPriority = data.entityInfoDetailsList
       .map(o => o.groupName)
@@ -102,7 +106,7 @@ export class ProductInfoComponent {
       elementType:[elementType],
       attributeType:[attributeType],
       attributeValues:[attributeValues],
-      selectedValue:[this.utility.isContainJson(data.selectedValue)?JSON.parse(data.selectedValue):data.selectedValue,attributeType=='required'?Validators.required:null]
+      selectedValue:[this.utility.isContainJson(data.selectedValue)?JSON.parse(data.selectedValue):data.selectedValue,attributeType=='Required'?[Validators.required]:elementType=='Number' && attributeType =='Range'? [Validators.min(attributeValues.min),Validators.max(attributeValues.max)]:[]]
     }));
   }
   get f(): { [key: string]: AbstractControl } {
@@ -188,7 +192,7 @@ export class ProductInfoComponent {
         dimension4:value?.dimension4,
         dimension5:value?.dimension5,
         baseCode:value.baseCode,
-        entityTypeId:value.productType.id,
+        entityTypeId:this.selectedProduct ?this.selectedProduct.entityTypeId:value.productType.id,
         isBlocked:false,
         allowProductCloning:value.allowProductCloning,
         entityInfoDetailsList:groupArrItems
@@ -196,6 +200,7 @@ export class ProductInfoComponent {
       if(this.selectedProduct){
         this.entityInfoService.updateEntityType(data).subscribe({
           next:(resp)=>{
+            this.router.navigate(['entity/details/'+resp.resultData.id]);
               this.savedProductEvent.emit(resp.resultData)
           }
         })
@@ -204,11 +209,15 @@ export class ProductInfoComponent {
       {
         this.entityInfoService.saveEntityType(data).subscribe({
           next:(resp)=>{
+            this.router.navigate(['entity/details/'+resp.resultData.id]);
               this.savedProductEvent.emit(resp.resultData)
           }
         })
       }
       console.log(data);
+    }
+    else{
+      this.messageService.add({ severity: 'error', summary: 'Please fill or select the mandatory fields', detail: null });
     }
   }
   ngOnChanges(){
@@ -219,6 +228,6 @@ export class ProductInfoComponent {
     }
   }
   cancel(){
-    this.productForm.reset();
+    this.router.navigate(['entity']);
   }
 }

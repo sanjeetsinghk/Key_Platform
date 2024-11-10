@@ -1,6 +1,7 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { FilterService, MenuItem, SelectItemGroup, TreeNode } from 'primeng/api';
 import { SuggestionLists } from 'src/app/modules/constants/suggestions-list';
 import { EntityTreeModel } from 'src/app/modules/models/entity-tree.model';
@@ -27,7 +28,9 @@ export class ScenarioPerformanceIndicatorComponent {
   fields:any[]=[];
   menuItems!: MenuItem[];
   downloadJsonHref:any;
+  dimensionList:{ label?: string; icon?: string; separator?: boolean }[]=[];
   constructor(
+    private router:Router,
     private sanitizer:DomSanitizer,
     private entityInfoService:ScenarioService,
     private formBuilder:FormBuilder,
@@ -117,14 +120,18 @@ export class ScenarioPerformanceIndicatorComponent {
       ]
       this.fields=items;
       console.log(event.node)  
-      console.log(obj)
+      console.log(obj);
+      this.bindDimensionsList(obj);
     }  
   }
-  checkForTextandQuotes(value:any){
+  checkForTextandQuotes(value:any){   
+    if(typeof(value) ==='object'){
+      value=value?.value;
+    }
     if(isNaN(value))
       return "'"+value+"'";
     else
-    return value;
+      return value;
   }
   getSelectedNodeChildren(children:any[],node:any ){
     let items=[];
@@ -199,6 +206,25 @@ export class ScenarioPerformanceIndicatorComponent {
   getNodeListById(){
 
   }
+  bindDimensionsList(obj:any){
+    this.dimensionList=[
+      {
+        label:"Dimension 1 : "+(obj.dimension1Value ? obj.dimension1Value :0)
+      },
+      {
+        label:"Dimension 2 : "+(obj.dimension2Value ?+obj.dimension2Value:0)
+      },
+      {
+        label:"Dimension 3 : "+(obj.dimension3Value ? obj.dimension3Value:0)
+      },
+      {
+        label:"Dimension 4 : "+(obj.dimension4Value ? obj.dimension4Value:0)
+      },
+      {
+        label:"Dimension 5 : "+(obj.dimension5Value ? obj.dimension5Value:0)
+      }
+    ]
+  }
   search(event: AutoCompleteCompleteEvent) {
     console.log(event)
     let suggestionLoist=SuggestionLists.map((x)=>{return {label:x,value:x,calculatedValue:x,nodeName:null}})   
@@ -233,7 +259,7 @@ export class ScenarioPerformanceIndicatorComponent {
     }
   }
   cancel(){
-
+    this.router.navigate(['scenario']);
   }
   getSelectedNodesList(value:any[]){
     let list=[]

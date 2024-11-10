@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { RolePermission } from 'src/app/modules/constants/role-permission';
@@ -29,7 +30,7 @@ export class EntityNodeInfoComponent {
   @Input() entityNodeTypeList:IEntityTypeModel[];
   @Output() savedProductEvent = new EventEmitter<EntityInfoModel>();
   @Input() selectedProduct:EntityInfoModel;
-  constructor(private cdr:ChangeDetectorRef,private utility:Utility,private authService:AuthService,private entityInfoService:EntityInfoService,private entityNodeTypeService:EntityNodeTypeService,private formBuilder: FormBuilder,private authState:AuthState){
+  constructor(private router:Router,private messageService:MessageService,private cdr:ChangeDetectorRef,private utility:Utility,private authService:AuthService,private entityInfoService:EntityInfoService,private entityNodeTypeService:EntityNodeTypeService,private formBuilder: FormBuilder,private authState:AuthState){
     this.createEntityandEntityNode=this.authState.GetUserPermission(RolePermission.createEntityandEntityNode);
   }
   labels:any;
@@ -52,6 +53,9 @@ export class EntityNodeInfoComponent {
       allowProductCloning:[ data !=null ? data?.allowProductCloning: true],
       groupArr:this.formBuilder.array([])
     })
+    if(data?.id){
+      this.productForm.get("productType").disable();
+    }
     if(data && data!=null){
       const orderPriority =(data.entityNodeInfoDetailsList || data.entityInfoDetailsList)
       .map(o => o.groupName)
@@ -107,7 +111,7 @@ export class EntityNodeInfoComponent {
       elementType:[elementType],
       attributeType:[attributeType],
       attributeValues:[attributeValues],
-      selectedValue:[this.utility.isContainJson(data.selectedValue)?JSON.parse(data.selectedValue):data.selectedValue,attributeType=='required'?Validators.required:null]
+      selectedValue:[this.utility.isContainJson(data.selectedValue)?JSON.parse(data.selectedValue):data.selectedValue,attributeType=='Required'?[Validators.required]:elementType=='Number' && attributeType =='Range'? [Validators.min(attributeValues.min),Validators.max(attributeValues.max)]:[]]
     }));
   }
   get f(): { [key: string]: AbstractControl } {
@@ -123,7 +127,7 @@ export class EntityNodeInfoComponent {
     //this.productForm.reset();
     this.groupArrList().clear();
     this.fields=[];
-    const orderPriority = event.entityNodeTypeFields
+    const orderPriority = event.entityNodeTypeFields.filter((x)=>!x.isBlocked)
       .map(o => o.groupName)
       .reduce((map, category, idx) => {
         if (map[category] == null) {
@@ -131,7 +135,7 @@ export class EntityNodeInfoComponent {
         }
         return map;
       }, {});  
-      let sortedArray=  event.entityNodeTypeFields.sort((a, b) => orderPriority[a.groupName] - orderPriority[b.groupName]);
+      let sortedArray=  event.entityNodeTypeFields.filter((x)=>!x.isBlocked).sort((a, b) => orderPriority[a.groupName] - orderPriority[b.groupName]);
       this.sortingArrangements(sortedArray);
   }
   sortingArrangements(sortedArray:any[]){
@@ -193,7 +197,7 @@ export class EntityNodeInfoComponent {
         dimension4:value?.dimension4,
         dimension5:value?.dimension5,
         baseCode:value.baseCode,
-        entityTypeId:value.productType.id,
+        entityTypeId:this.selectedProduct ?this.selectedProduct.entityTypeId:value.productType.id,
         isBlocked:false,
         allowProductCloning:value.allowProductCloning,
         entityNodeInfoDetailsList:groupArrItems
@@ -215,6 +219,10 @@ export class EntityNodeInfoComponent {
       }
       console.log(data);
     }
+    else
+    {
+      this.messageService.add({ severity: 'error', summary: 'Please fill or select the mandatory fields', detail: null });
+    }
   }
   ngOnChanges(){
     if(this.selectedProduct){
@@ -224,6 +232,6 @@ export class EntityNodeInfoComponent {
     }
   }
   cancel(){
-    this.productForm.reset();
+    this.router.navigate(['entitynode']);
   }
 }

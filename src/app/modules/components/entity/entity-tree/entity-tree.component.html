@@ -3,18 +3,24 @@
     <div class="col-9">
         <p-card header="Entity" class="w-100 w-full">
             <div class="grid p-fluid">            
-                <div class="col-7">       
+                
+                <div class="col-5" >                      
                     <p-dropdown 
                     appendTo="body" [filter]="true"  filterBy="name" 
                     [showClear]="true" [options]="entityNodeTypeList" optionLabel="name" (onChange)="onEntityNodeTypeSelect($event.value)"
                     placeholder="Select Entity Node Type" autoWidth="true" style="min-width:100%; min-width:10rem;" />
-                    
+                </div>
+                <div class="col-5">       
+                    <p-dropdown 
+                    appendTo="body" [filter]="true"  filterBy="nodeName" 
+                    [showClear]="true" [options]="entityNodeComponnetList" optionLabel="nodeName" (onChange)="onEntityNodeComponentSelect($event.value)"
+                    placeholder="Select Entity Node Component" autoWidth="true" style="min-width:100%; min-width:10rem;" />
                 </div>
                 <div class="col-1 mt-1" >
                     <p-button  icon="pi pi-plus" severity="success" [rounded]="false" [outlined]="false" class="btnAdd" (click)="addedNode()"/>                          
                 </div>
-                <div class="col-4 mt-1" >  
-                    <a class="btn btn-clear ml-3" title="Download JSON" [href]="downloadJsonHref" download="entity-tree.json">Export Entity Tree</a>  
+                <div class="col-12 m-0 p-0" >                      
+                    <a icon="pi pi-check" class="btn btn-clear ml-3" title="Download JSON" [href]="downloadJsonHref" download="entity-tree.json">Export Entity Tree</a>  
                 </div>
                 <div class="col-12 flex">
                     <p-tree 
@@ -26,24 +32,16 @@
                     selectionMode="single" 
                     [(selection)]="selectedFiles3" 
                     (onNodeSelect)="nodeSelect($event)" >
-                    <ng-template let-node pTemplate="default">
-                        <span
-                            pDraggable="treedragdrop"
-                            pDroppable="treedragdrop"
-                            (onDragStart)="onDragStart($event, node)"
-                            (onDragEnd)="onDragEnd($event, node)"
-                            (onDrop)="onDrop($event, node)"
-                            (onDragEnter)="onDragEnter($event, node)"
-                            (onDragLeave)="onDragLeave($event, node)"
-                            [ngClass]="node.children.length>0 ?'has-child':'no-child'">
-                            <b *ngIf="node.data.qty>1">{{node.data.qty}}</b><b> {{ node.label }}</b>
-                            <br/>
-                            <input  type="text" id="selectedValue" pInputText [(ngModel)]="node.data.customlabel" />
-                            <label>Total Cost: {{node.data.totalValue}}</label>
-                        </span>
+                    <ng-template let-node pTemplate="default"> 
+                        <b *ngIf="node.data.qty>1">{{node.data.qty}}</b>
+                        <b class="tree-node-text"> {{ node.label }}</b>
+                        <p-button  icon="pi pi-bars" label="Dimensions" [rounded]="true" [text]="true"  (click)="menu.toggle($event)"/>
+                      
                     </ng-template>
                     </p-tree>
+                    <p-menu #menu id="config_menu" [model]="dimensionList" [popup]="true" />
                     <p-contextMenu #cm [model]="menuItems" />
+                    
                 </div>
                 <p-contextMenu #sim [model]="suggestItems" [global]="true"></p-contextMenu>
                 <div class="col-12 p-fluid">
@@ -65,7 +63,7 @@
                                                                     <label for="selectedValue">{{arrItem.value.fieldName}}</label>
                                                                     <ng-container *ngIf="arrItem.value.elementType=='Text'">
                                                                         <input *ngIf="arrItem.value.attributeType=='Required'" type="text" id="selectedValue" pInputText formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
-                                                                        <p-inputNumber *ngIf="arrItem.value.attributeType=='Range'"  [min]="arrItem.value.attributeValues.min" [max]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                                        <input type="text" *ngIf="arrItem.value.attributeType=='Range'" pInputText  [minlength]="arrItem.value.attributeValues.min" [maxlength]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
                                                                         <small id="username-help" *ngIf="arrItem.value.attributeType=='Range'">
                                                                         Range should be selected in between {{arrItem.value.attributeValues.min}} to {{arrItem.value.attributeValues.max}}
                                                                         </small>
@@ -76,11 +74,16 @@
                                                                             placeholder="Select Option" autoWidth="false" class="w-100 w-full md:w-30rem" />
                                                                     </ng-container>
                                                                     <ng-container *ngIf="arrItem.value.elementType=='Number'">
-                                                                        <input type="number" *ngIf="arrItem.value.attributeType=='Required'" id="selectedValue" pInputText formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
-                                                                        <p-inputNumber *ngIf="arrItem.value.attributeType=='Range'"  [min]="arrItem.value.attributeValues.min" [max]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                                        <input type="number"                                                   
+                                                                        placeholder="0.00"
+                                                                        step=".01" pInputText *ngIf="arrItem.value.attributeType=='Required'" id="selectedValue" pInputText formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
+                                                                        <input type="number"                                                   
+                                                                        placeholder="0.00"
+                                                                        step=".01" pInputText *ngIf="arrItem.value.attributeType=='Range'"  [min]="arrItem.value.attributeValues.min" [max]="arrItem.value.attributeValues.max" id="selectedValue" formControlName="selectedValue"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && fiItems(groupIndex,arrIndex,'selectedValue') }" />
                                                                         <small id="username-help" *ngIf="arrItem.value.attributeType=='Range'">
                                                                         Range should be selected in between {{arrItem.value.attributeValues.min}} to {{arrItem.value.attributeValues.max}}
                                                                         </small>
+                                                                        
                                                                         <p-dropdown 
                                                                         *ngIf="arrItem.value.attributeType=='DropDown'"
                                                                         formControlName="selectedValue" appendTo="body" [filter]="true"  filterBy="name" 
@@ -101,6 +104,9 @@
                             </p-tabPanel>
                             <p-tabPanel header="Calculations" class="line-height-3 m-0 w-full dimension">
                                 <div class="grid">
+                                    <div class="col-12 text-right">
+                                        <app-view-math-docs></app-view-math-docs>
+                                    </div>
                                     <div class="col-6">
                                         <label for="dimension1">Dimension 1</label> <strong class="ml-2"> Total: {{dim1val}}</strong>
                                         <p-autoComplete    
@@ -177,11 +183,25 @@
         <p-card header="Performance Indicators">
            <div class="grid p-fluid">
                 <div class="col-12 p-0 m-0" >
-                    <ul class="p-1" *ngFor="let item of performanceMetrics">
-                        <label>{{item.name}}</label> <strong class="ml-5">{{item.value}}</strong>
+                    <ul class="p-1" *ngFor="let item of performaceIndicators">
+                        <label>{{item.customName}}</label> <strong class="ml-5">{{item.value}}</strong>
                     </ul>
                 </div>
            </div>
         </p-card>
     </div>
+    <p-dialog [(visible)]="showEntityNodeComponentDlg" header="Save Entity Node component" [modal]="true" [style]="{width:'450px'}">
+        <div class="flex">
+           <div class="grid w-full">
+            <div class="col-12 p-fluid">
+                <label for="name" class="block text-700 font-medium mb-2">Node Name</label>                    
+                <input type="text" pInputText [(ngModel)]="nodeNameToBeSaved" />                
+            </div>
+           </div>
+        </div>
+        <ng-template pTemplate="footer" >
+            <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="showEntityNodeComponentDlg = false"></button>
+            <button pButton pRipple icon="pi pi-check" class="p-button-text success" label="Save" (click)="saveEntityNodeComponent()"></button>
+        </ng-template>
+    </p-dialog>
 </div>

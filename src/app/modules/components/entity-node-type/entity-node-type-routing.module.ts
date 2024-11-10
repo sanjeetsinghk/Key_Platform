@@ -8,7 +8,10 @@ import { EntityNodeTypeDetailsComponent } from '../entity-node-type_details/enti
             path: '', component: EntityNodeTypeComponent, 
         },
         {
-            path:'details',pathMatch:"full",component: EntityNodeTypeDetailsComponent
+            path:'details', pathMatch:"full",component: EntityNodeTypeDetailsComponent
+        },
+        {
+            path:'details/:id', pathMatch:"full",component: EntityNodeTypeDetailsComponent
         }
     ])],
     exports: [RouterModule]

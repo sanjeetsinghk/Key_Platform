@@ -19,6 +19,7 @@ import { IEntityListModel } from '../models/entity-list.model';
 export class EntityNodeTypeService {
     constructor(private http: HttpClient,private localStorageService:LocalStorageService) { }
     selectedEntityModel:IEntityNodeTypeModel;
+    entityTypesModel:IEntityNodeTypeModel[];
     saveEntityType(data:IEntityNodeTypeModel):Observable<any>{
         return this.http.post(environment.apiurl+'entitynode/saveEntityNodeType',data).pipe(
             map((response) => {
@@ -112,6 +113,19 @@ export class EntityNodeTypeService {
     }
     getEntityNodeLists(data:ISelectedCompanyDto):Observable<any>{
       return this.http.post(environment.apiurl+'entitynode/getEntityNodeLists',data).pipe(
+          map((response) => {
+            // prepare the response to be handled, then return
+           return response;
+          }),
+          // if we are setting cookie on server, this is the place to call local server
+          //switchMap((user) => this.SetLocalSession(user)),
+          catchError((error)=>{
+            return throwError(error || 'server error.')
+          })
+        );
+    }
+    getEntityNodeTypeById(data:ISelectedCompanyDto):Observable<any>{
+      return this.http.post(environment.apiurl+'entitynode/getEntityNodeTypeById',data).pipe(
           map((response) => {
             // prepare the response to be handled, then return
            return response;

@@ -7,11 +7,12 @@
         [contextMenu]="cm"
         selectionMode="single" [(selection)]="selectedFiles3"  (onNodeSelect)="nodeSelect($event)" >
         <ng-template let-node pTemplate="default">
-            <b>{{node.data.qty}} {{ node.label }}</b><br/>
-            {{node.data.customlabel}}<br/>
-            <label>Total Cost: {{node.data.totalValue}}</label>
+            <b *ngIf="node.data.qty>1">{{node.data.qty}}</b>
+            <b class="tree-node-text"> {{ node.label }}</b>
+            <p-button  icon="pi pi-bars" label="Dimensions" [rounded]="true" [text]="true"  (click)="menu.toggle($event)"/>
         </ng-template>
         </p-tree>
+        <p-menu #menu id="config_menu" [model]="dimensionList" [popup]="true" />
         <p-contextMenu #cm [model]="menuItems" />
     </div>
     <form [formGroup]="productForm" (ngSubmit)="saveProduct()" class="w-full">
@@ -22,6 +23,7 @@
                         <tr class="justify-content-center">
                             <th>Name</th><th>Result</th>
                             <th>Precision </th>
+                            <th class="text-right"> <app-view-math-docs></app-view-math-docs></th>
                             <th>
                                 <p-button  [pTooltip]="tooltipContent" tooltipPosition="top" label="Show Suggestion List" [link]="true" class="ml-3" />
                                 <ng-template #tooltipContent>
@@ -41,11 +43,11 @@
                                 <tr class="justify-content-center mt-3">
                                     <td><input type="text" pInputText class="w-50" formControlName="customName"/></td>
                                     <td><strong>{{item.value.value}}</strong></td>
-                                    <td><input type="text" pInputText class="w-50" formControlName="precesion"/></td>
-                                    <td colspan="2" class="text-right"><p-button *ngIf="canAddKpiPerformance" icon="pi pi-trash" title="Delete" severity="danger" (click)="deleteMetrics(groupIndex)" /> </td>
+                                    <td colspan="2"><input type="text" pInputText class="w-50" formControlName="precesion"/></td>
+                                    <td colspan="2" class="text-right"><p-button  icon="pi pi-trash" title="Delete" severity="danger" (click)="deleteMetrics(groupIndex)" /> </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="4" class="dimension">
+                                    <td colspan="6" class="dimension">
                                         <p-autoComplete 
                                         formControlName="calculation"
                                         [suggestions]="suggestionList"

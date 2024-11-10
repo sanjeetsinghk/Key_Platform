@@ -11,6 +11,7 @@ import { AuthState } from './auth.state';
 import { environment } from 'src/environments/environment';
 import { ICompanyAdmin } from '../models/company-admin.model';
 import { Router } from '@angular/router';
+import { UserDto } from '../models/userDto.model';
 
 
 @Injectable({ providedIn: 'root' })
@@ -31,5 +32,16 @@ export class UserService {
       })
     );
   }
+  DeleteUser(users:UserDto[]): Observable<any> {
+    return this.http.post(this._apiUrl+'user/deleteUser',users).pipe(
+      map((response) => {       
+        return response;
+      }),    
+      catchError((error)=>{
+        return throwError(error || 'server error.')
+      })
+    );
+  }
+
   
 }

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MenuItem, MessageService, TreeNode } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs';
 
@@ -51,7 +51,9 @@ export class ScenarioTreeComponent {
   menuItems!: MenuItem[];
   downloadJsonHref:any;
   suggestItems:MenuItem[]=[];
+  dimensionList:{ label?: string; icon?: string; separator?: boolean }[]=[];
   constructor(private sanitizer:DomSanitizer,
+    private router:Router,
     private authService:AuthService,
     private entityInfoService:ScenarioService,
     private activeRouter:ActivatedRoute,
@@ -151,7 +153,8 @@ export class ScenarioTreeComponent {
       groupArr:this.formBuilder.array([])
     })
     if(data && data!=null){
-      let fieldsType=data?.entityNodeTypeFields || data?.entityNodeInfoDetailsList ||  data?.entityInfoDetailsList
+      let fieldsType=data?.entityNodeTypeFields || data?.entityNodeInfoDetailsList ||  data?.entityInfoDetailsList;
+      fieldsType=fieldsType.filter((x)=>!x.isBlocked);
       const orderPriority = fieldsType
       .map(o => o.groupName)
       .reduce((map, category, idx) => {
@@ -230,7 +233,7 @@ export class ScenarioTreeComponent {
         elementType:[elementType],
         attributeType:[attributeType],
         attributeValues:[attributeValues],
-        selectedValue:[data.selectedValue?this.utility.isContainJson(data.selectedValue)?JSON.parse(data.selectedValue):data.selectedValue:'',attributeType=='required'?Validators.required:null]
+        selectedValue:[data.selectedValue?this.utility.isContainJson(data.selectedValue)?JSON.parse(data.selectedValue):data.selectedValue:'',attributeType=='Required'?[Validators.required]:elementType=='Number' && attributeType =='Range'? [Validators.min(attributeValues.min),Validators.max(attributeValues.max)]:[]]
       }));
     }
     catch(err){
@@ -350,6 +353,9 @@ saveProduct(){
     this.productForm.get("dimension4Value").setValue(this.dim4val);
     this.productForm.get("dimension5Value").setValue(this.dim5val);
     this.rebindNodeAfterCalculations(totalValue);
+  }
+  else{
+    this.messageService.add({ severity: 'error', summary: 'Please fill or select the mandatory fields', detail: null });
   }
 }
 reCalculateFields(){
@@ -528,6 +534,8 @@ getFieldsValue(fieldName:string){
       if(x.fieldName.toLowerCase()== fieldName.toLowerCase()){
         if(typeof(x.selectedValue)==='object')
           selectedValue= x.selectedValue.value;// drop down calulcation to get value
+        if(isNaN(x.selectedValue))
+          selectedValue= "'"+x.selectedValue+"'";
         else
           selectedValue= x.selectedValue;
       }
@@ -536,7 +544,7 @@ getFieldsValue(fieldName:string){
   return selectedValue;
 }
 cancel(){
-
+  this.router.navigate(['scenario']);
 }
 private expandRecursive(node: TreeNode, isExpand: boolean) {
     node.expanded = isExpand;
@@ -566,10 +574,29 @@ nodeSelect(event:any){
     this.nodeId=event.node.key;
     this.reCalculateFields();
     this.suggestions= Array.from([...this.nodes.map((x)=>x.name),...this.fields]);
+    this.bindDimensionsList(obj);
     
   }  
 }
-
+bindDimensionsList(obj:any){
+  this.dimensionList=[
+    {
+      label:"Dimension 1 : "+(obj.dimension1Value ? obj.dimension1Value :0)
+    },
+    {
+      label:"Dimension 2 : "+(obj.dimension2Value ?+obj.dimension2Value:0)
+    },
+    {
+      label:"Dimension 3 : "+(obj.dimension3Value ? obj.dimension3Value:0)
+    },
+    {
+      label:"Dimension 4 : "+(obj.dimension4Value ? obj.dimension4Value:0)
+    },
+    {
+      label:"Dimension 5 : "+(obj.dimension5Value ? obj.dimension5Value:0)
+    }
+  ]
+}
 search(event: AutoCompleteCompleteEvent) {
   console.log(event)
   //this.suggestions = Array.from([...this.fields,...SuggestionLists])

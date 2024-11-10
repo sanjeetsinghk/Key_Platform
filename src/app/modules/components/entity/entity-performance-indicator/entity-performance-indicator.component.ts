@@ -1,10 +1,12 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { FilterService, MenuItem, SelectItemGroup, TreeNode } from 'primeng/api';
 import { RolePermission } from 'src/app/modules/constants/role-permission';
 import { SuggestionLists } from 'src/app/modules/constants/suggestions-list';
 import { EntityTreeModel } from 'src/app/modules/models/entity-tree.model';
+import { PerformanceIndicatorsModel } from 'src/app/modules/models/performance-indicators.model';
 import { AuthState } from 'src/app/modules/service/auth.state';
 import { EntityInfoService } from 'src/app/modules/service/entity-info.service';
 import { Utility } from 'src/app/modules/utility/utility';
@@ -29,7 +31,8 @@ export class EntityPerformanceIndicatorComponent {
   fields:any[]=[];
   menuItems!: MenuItem[];
   downloadJsonHref:any;
-  constructor(private sanitizer:DomSanitizer,private authstate:AuthState,private entityInfoService:EntityInfoService,private formBuilder:FormBuilder,private utility:Utility,private filterService: FilterService){
+  dimensionList:{ label?: string; icon?: string; separator?: boolean }[]=[];
+  constructor(private router:Router,private sanitizer:DomSanitizer,private authstate:AuthState,private entityInfoService:EntityInfoService,private formBuilder:FormBuilder,private utility:Utility,private filterService: FilterService){
     this.canAddKpiPerformance=this.authstate.GetUserPermission(RolePermission.addPerformanceKPIs);
   }
 
@@ -90,10 +93,34 @@ export class EntityPerformanceIndicatorComponent {
       console.log(treeNode)
       this.files=[JSON.parse(this.entityTreeData.treeNode)];
       this.files[0].data?.performanceIndicators?.groupArr?.forEach((item:TreeNode)=>{
+        this.viewPerformanceMetrics()
         this.addGroupArrList(item,item.key);
       })
       this.generateDownloadJsonUri();
     }
+  }
+  viewPerformanceMetrics(){
+    var items:PerformanceIndicatorsModel[]=[];
+    this.files[0].data?.performanceIndicators?.groupArr?.forEach((item)=>{
+      items.push({
+        key:item?.key,
+        name:item?.name,
+        customName:item?.customName,
+        itemValue:item?.totalValue,
+        calculation:item?.calculation 
+          ? item.calculation
+          : undefined,
+        value:item?.value 
+          ? item.value
+        : '',
+        precesion:item?.precesion
+          ? item.precesion
+          : '',
+        canSeeValue:true
+      })
+    })
+    this.entityInfoService.setPerformanceIndicators(items);
+    console.log(items);
   }
   generateDownloadJsonUri() {
     var theJSON = JSON.stringify(this.files);
@@ -117,6 +144,7 @@ export class EntityPerformanceIndicatorComponent {
       this.fields=items;
       console.log(event.node)  
       console.log(obj)
+      this.bindDimensionsList(obj);
     }  
   }
   checkForTextandQuotes(value:any){
@@ -182,7 +210,7 @@ export class EntityPerformanceIndicatorComponent {
     }
     this.entityInfoService.updateEntityTree(saveData).subscribe({
       next:(resp)=>{
-       
+       this.viewPerformanceMetrics();
       }
     });
   }
@@ -201,13 +229,32 @@ export class EntityPerformanceIndicatorComponent {
   getNodeListById(){
 
   }
+  bindDimensionsList(obj:any){
+    this.dimensionList=[
+      {
+        label:"Dimension 1 : "+(obj.dimension1Value ? obj.dimension1Value :0)
+      },
+      {
+        label:"Dimension 2 : "+(obj.dimension2Value ?+obj.dimension2Value:0)
+      },
+      {
+        label:"Dimension 3 : "+(obj.dimension3Value ? obj.dimension3Value:0)
+      },
+      {
+        label:"Dimension 4 : "+(obj.dimension4Value ? obj.dimension4Value:0)
+      },
+      {
+        label:"Dimension 5 : "+(obj.dimension5Value ? obj.dimension5Value:0)
+      }
+    ]
+  }
   search(event: AutoCompleteCompleteEvent) {
     console.log(event)
     let suggestionLoist=SuggestionLists.map((x)=>{return {label:x,value:x,calculatedValue:x,nodeName:null}})   
     this.suggestionList =[... [...this.fields,...suggestionLoist,{label:event.query,value:event.query,calculatedValue:event.query,nodeName:null}].filter((x)=>x.label.toLowerCase().indexOf(event.query.toLowerCase())!=-1)];
   }
   cancel(){
-
+    this.router.navigate(['entity']);
   }
   unselectFile() {
     console.log(this.selectedFiles3);

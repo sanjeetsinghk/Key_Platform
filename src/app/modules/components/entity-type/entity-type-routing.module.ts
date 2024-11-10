@@ -12,6 +12,9 @@ import { EntityTypeDetailsComponent } from '../entity-type_details/entity-type-d
         },
         {
             path:'details',pathMatch:"full",component: EntityTypeDetailsComponent
+        },
+        {
+            path:'details/:id',pathMatch:"full",component: EntityTypeDetailsComponent
         }
     ])],
     exports: [RouterModule]

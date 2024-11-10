@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { RolePermission } from 'src/app/modules/constants/role-permission';
+import { ISelectedCompanyDto } from 'src/app/modules/models/company-selection.model';
 import { IEntityTypCustomFieldsModel } from 'src/app/modules/models/entity-type-custom-fields.model';
 import { IEntityTypeModel } from 'src/app/modules/models/entity-type.model';
 import { AuthService } from 'src/app/modules/service/auth.service';
@@ -22,11 +24,36 @@ export class EntityTypeDetailsComponent {
   labels:string[] | undefined;
   customField:IEntityTypCustomFieldsModel[]=[];
   canManageEntityType:boolean=false;
-  constructor(private entityTypeService:EntityTypeService, private authService:AuthService,private formBuilder: FormBuilder, public dialogService: DialogService, private messageService: MessageService,private authState:AuthState){}
+  entityId:number=0;
+  showForm:boolean=false;
+  constructor(private router:Router,private activeRouter:ActivatedRoute,private entityTypeService:EntityTypeService, private authService:AuthService,private formBuilder: FormBuilder, public dialogService: DialogService, private messageService: MessageService,private authState:AuthState){}
   ngOnInit(){   
-    let data=this.entityTypeService.selectedEntityModel;
-    this.bindForm(data);
+    this.bindForm(null);
     this.canManageEntityType=this.authState.GetUserPermission(RolePermission.manageEntityType);
+    this.activeRouter.params.subscribe(result =>
+      {          
+        this.entityId=result["id"];
+        if(this.entityId>0){
+          let details:ISelectedCompanyDto={
+            CompanyId:this.authService.getSelectedCompany(),
+            UserId:this.authService.getUserId(),
+            Id:this.entityId
+          }
+          this.entityTypeService.getEntityTypeById(details).subscribe({
+            next:(resp)=>{    
+              this.entityTypeService.selectedEntityModel =resp.resultData;         
+              this.bindForm(resp.resultData);
+              this.showForm=true;
+            }
+          })
+        }
+        else
+        {
+         // let data=this.entityTypeService.selectedEntityModel;
+          this.bindForm(null);
+          this.showForm=true;
+        }
+      });  
   }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
@@ -71,7 +98,7 @@ save(){
       data.id=0;
       this.entityTypeService.saveEntityType(data).subscribe((resp)=>{
         this.bindForm(resp.resultData)
-       console.log(resp)
+        console.log(resp)
       });
     }
     else
@@ -86,5 +113,7 @@ save(){
 addItem(data:IEntityTypCustomFieldsModel[]){
   this.customField=data;
 }
-cancel(){}
+cancel(){
+  this.router.navigate(['entitytype']);
+}
 }

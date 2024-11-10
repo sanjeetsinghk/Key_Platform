@@ -1,14 +1,16 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MenuItem, MessageService, TreeDragDropService, TreeNode } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs';
 
 import { SuggestionLists } from 'src/app/modules/constants/suggestions-list';
 import { EntityInfoModel } from 'src/app/modules/models/entity-info.model';
+import { IEntityNodeComponentModel } from 'src/app/modules/models/entity-node-component.model';
 import { IEntityNodeTypeModel } from 'src/app/modules/models/entity-node-type.model';
 import { EntityTreeModel } from 'src/app/modules/models/entity-tree.model';
+import { PerformanceIndicatorsModel } from 'src/app/modules/models/performance-indicators.model';
 import { AuthService } from 'src/app/modules/service/auth.service';
 import { EntityInfoService } from 'src/app/modules/service/entity-info.service';
 import { Utility } from 'src/app/modules/utility/utility';
@@ -50,12 +52,26 @@ export class EntityTreeComponent {
   entityTreeId:number=0;
   performanceMetrics:any[]=[];
   suggestItems:MenuItem[]=[];
+  dimensionList:{ label?: string; icon?: string; separator?: boolean }[]=[];
   downloadJsonHref:any;
-  constructor(private sanitizer:DomSanitizer,private authService:AuthService,private entityInfoService:EntityInfoService,private activeRouter:ActivatedRoute,private cdr:ChangeDetectorRef,private utility:Utility,private formBuilder:FormBuilder,private messageService:MessageService){    
+  submitted:boolean=false;
+  performaceIndicators:PerformanceIndicatorsModel[];
+  showEntityNodeComponentDlg:boolean=false;
+  nodeNameToBeSaved:string="";
+  entityNodeComponnetList:IEntityNodeComponentModel[]=[];
+  selectedNodeComponent:TreeNode;
+  constructor(private router:Router,private sanitizer:DomSanitizer,private authService:AuthService,private entityInfoService:EntityInfoService,private activeRouter:ActivatedRoute,private cdr:ChangeDetectorRef,private utility:Utility,private formBuilder:FormBuilder,private messageService:MessageService){    
   }
   ngOnInit(){
     this.bindEntityForm(null);
-   
+    this.entityInfoService.getPerformanceIndicators().subscribe((res)=>{
+      this.performaceIndicators=res;
+    });
+    this.entityInfoService.getEntityNodeComponnet().subscribe({
+      next:(resp)=>{
+        this.entityNodeComponnetList=resp.resultData?.filter((x)=>!x.isBlocked);
+      }
+    })
   }
   generateDownloadJsonUri() {
     var theJSON = JSON.stringify(this.files);
@@ -91,8 +107,38 @@ export class EntityTreeComponent {
           }
       })
       this.menuItems = [        
-        { label: 'Remove Node', icon: 'pi pi-times', command: (event) => this.unselectFile() }
+        { label: 'Remove Node', icon: 'pi pi-times', command: (event) => this.unselectFile() },
+        { label: 'Save Node', icon: 'pi pi-plus', command: (event) => this.addEntitycomponent() }
       ];
+    }
+  }
+  addEntitycomponent(){
+    this.showEntityNodeComponentDlg=true;
+    console.log(this.selectedFiles3)
+  }
+  saveEntityNodeComponent(){
+    if(this.nodeNameToBeSaved)
+    {
+      let selectedEntity=this.selectedFiles3;
+      selectedEntity.label=this.nodeNameToBeSaved;
+      selectedEntity.key=this.utility.generateGuid();
+      let data:IEntityNodeComponentModel={
+        id:0,
+        companyId:this.authService.getSelectedCompany(),
+        userId:this.authService.getUserId(),
+        nodeName:this.nodeNameToBeSaved,
+        treeNode:JSON.stringify(selectedEntity),
+        isBlocked:false
+      }
+      this.entityInfoService.saveEntityNodeComponnet(data).subscribe({
+        next:(resp)=>{
+          this.showEntityNodeComponentDlg=false;
+        }
+      })
+    }
+    else
+    {
+      this.messageService.add({ severity: 'error', summary: 'Please enter component name to be saved', detail: null });
     }
   }
   unselectFile() {
@@ -108,7 +154,14 @@ export class EntityTreeComponent {
   deleteAndInsertNode(data:TreeNode){
     try{
       if(data.children.filter((x)=>x.key==this.selectedFiles3.key.toString()).length>0){
-        data.children=data.children.filter((x)=>x.key!==this.selectedFiles3.key.toString());        
+        if(this.selectedNodeComponent){
+          data.children.push(this.selectedNodeComponent);
+          return;
+        }
+        else
+        {
+          data.children=data.children.filter((x)=>x.key!==this.selectedFiles3.key.toString());        
+        }
         return;
       }
       else
@@ -146,6 +199,7 @@ export class EntityTreeComponent {
     })
     if(data && data!=null){
       let fieldsType=data?.entityNodeTypeFields || data?.entityNodeInfoDetailsList ||  data?.entityInfoDetailsList
+      fieldsType=fieldsType.filter((x)=>!x.isBlocked);
       const orderPriority = fieldsType
       .map(o => o.groupName)
       .reduce((map, category, idx) => {
@@ -156,23 +210,6 @@ export class EntityTreeComponent {
       }, {}); 
       let sortedArray=  fieldsType.sort((a, b) => orderPriority[a.groupName] - orderPriority[b.groupName]);
       this.sortingArrangements(sortedArray);
-      // if(data?.defaultCostFormula){
-      //   this.fields.push(this.convertToArrIfObj(data.defaultCostFormula));
-      // }
-      // if(data?.defaultLeadTimeFormula){
-      //   this.fields.push(this.convertToArrIfObj(data.defaultLeadTimeFormula));
-      // }
-      // if(data?.dimension3){
-      //   this.fields.push(this.convertToArrIfObj(data.dimension3));
-      // }
-      
-      // if(data?.dimension4){
-      //   this.fields.push(this.convertToArrIfObj(data.dimension4));
-      // }
-      // if(data?.dimension5){
-      //   this.fields.push(this.convertToArrIfObj(data.dimension5));
-      // }
-     
     }
   }
   convertToArrIfObj(value:any){
@@ -246,7 +283,7 @@ export class EntityTreeComponent {
         elementType:[elementType],
         attributeType:[attributeType],
         attributeValues:[attributeValues],
-        selectedValue:[data.selectedValue?this.utility.isContainJson(data.selectedValue)?JSON.parse(data.selectedValue):data.selectedValue:'',attributeType=='required'?Validators.required:null]
+        selectedValue:[data.selectedValue?this.utility.isContainJson(data.selectedValue)?JSON.parse(data.selectedValue):data.selectedValue:'',attributeType=='Required'?[Validators.required]:elementType=='Number' && attributeType =='Range'? [Validators.min(attributeValues.min),Validators.max(attributeValues.max)]:[]]
       }));
     }
     catch(err){
@@ -271,11 +308,30 @@ export class EntityTreeComponent {
     }
     else
     {
-      this.findAndInsertNode(this.files[0]);
-     // this.bindEntityForm(this.selectedNodeType)
-      //this.expandAll();
-      //this.cdr.detectChanges();
+      if(this.selectedNodeComponent)
+      {
+        this.generateGUIDForNodes(this.selectedNodeComponent);
+        if(this.files[0].key==this.selectedFiles3.key)
+        {          
+          this.files[0].children.push(this.selectedNodeComponent);          
+        }
+        else{
+          this.deleteAndInsertNode(this.files[0])
+        }
+        this.cdr.detectChanges();
+      }
+      else
+      {
+        this.findAndInsertNode(this.files[0]);
+      }
+     
     }
+  }
+  generateGUIDForNodes(node:TreeNode){
+    node.key=this.utility.generateGuid();
+    node.children.forEach((x)=>{
+      this.generateGUIDForNodes(x);
+    })
   }
   findAndInsertNode(data:TreeNode){
     try{
@@ -325,7 +381,13 @@ export class EntityTreeComponent {
   }
   onEntityNodeTypeSelect(event:any){
     console.log(this.selectedFiles3)
+    console.log(event)
     this.selectedNodeType=event
+  }
+  onEntityNodeComponentSelect(event:any){
+    this.selectedNodeComponent=JSON.parse(event.treeNode);
+    console.log(event);
+   
   }
   ngOnChanges(){
     if(this.selectedProduct && this.entityTreeId==0){
@@ -358,6 +420,7 @@ collapseAll() {
     });
 }
 saveProduct(){
+  //this.submitted=true;
   console.log(this.productForm.value);
   if(this.productForm.valid){
     let totalValue=this.reCalculateFields();
@@ -367,6 +430,9 @@ saveProduct(){
     this.productForm.get("dimension4Value").setValue(this.dim4val);
     this.productForm.get("dimension5Value").setValue(this.dim5val);
     this.rebindNodeAfterCalculations(totalValue);
+  }
+  else{
+    this.messageService.add({ severity: 'error', summary: 'Please fill or select the mandatory fields', detail: null });
   }
 }
 reCalculateFields(){
@@ -555,6 +621,8 @@ getFieldsValue(fieldName:string){
       if(x.fieldName.toLowerCase()== fieldName.toLowerCase()){
         if(typeof(x.selectedValue)==='object')
           selectedValue= x.selectedValue.value;// drop down calulcation to get value
+        if(isNaN(x.selectedValue))
+          selectedValue= "'"+x.selectedValue+"'";
         else
           selectedValue= x.selectedValue;
       }
@@ -563,7 +631,7 @@ getFieldsValue(fieldName:string){
   return selectedValue;
 }
 cancel(){
-
+  this.router.navigate(['entity']);
 }
 private expandRecursive(node: TreeNode, isExpand: boolean) {
     node.expanded = isExpand;
@@ -579,6 +647,7 @@ clearFormArray = (formArray: FormArray) => {
   }
 }
 nodeSelect(event:any){
+  console.log(event)
   this.showForm=false;
   this.getAllNodesCalculatedFields();
   if(event.node?.data?.obj && event.node.data.obj)
@@ -587,28 +656,45 @@ nodeSelect(event:any){
     let obj=JSON.parse(event.node.data.obj);    
     this.clearFormArray(this.groupArrList());
     this.productForm.reset();
-        
+    this.bindDimensionsList(obj)
     this.bindEntityForm(obj);
     this.showForm=true;
     console.log(JSON.parse(event.node.data.obj));
     this.nodeId=event.node.key;
     this.reCalculateFields();
-    this.suggestions= Array.from([...this.nodes.map((x)=>x.name),...this.fields]);
     
     
   }  
- 
-
+}
+bindDimensionsList(obj:any){
+  this.dimensionList=[
+    {
+      label:"Dimension 1 : "+(obj.dimension1Value ? obj.dimension1Value :0)
+    },
+    {
+      label:"Dimension 2 : "+(obj.dimension2Value ?+obj.dimension2Value:0)
+    },
+    {
+      label:"Dimension 3 : "+(obj.dimension3Value ? obj.dimension3Value:0)
+    },
+    {
+      label:"Dimension 4 : "+(obj.dimension4Value ? obj.dimension4Value:0)
+    },
+    {
+      label:"Dimension 5 : "+(obj.dimension5Value ? obj.dimension5Value:0)
+    }
+  ]
 }
 search(event: AutoCompleteCompleteEvent) {
   console.log(event)
-  //this.suggestions = Array.from([...this.fields,...SuggestionLists])
- // return this.suggestions=[... this.suggestions = Array.from(this.brands)];
+  this.suggestions=[];
+  
   this.suggestions =[... [...this.nodes.map((x)=>x.name),...this.fields,...SuggestionLists,event.query].filter((x)=>x.toLowerCase().indexOf(event.query.toLowerCase())!=-1)];
 }
 nodes:any[]=[];
 focusElement:string;
 getAllNodesCalculatedFields(){
+  this.nodes=[];
   this.getRecursiveNodes(this.files);
   this.bindAllNodesList(this.files);
 }

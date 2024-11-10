@@ -76,7 +76,7 @@ export class UsersComponent {
     });
     this.ref.onClose.subscribe((product: any) => {
       if (product) {
-          this.messageService.add({ severity: 'info', summary: 'Company Added', detail: product.name });
+          this.messageService.add({ severity: 'info', summary: 'User has been invited/updated successfully', detail: product.name });
           this.getCompanies();
       }
     });
@@ -107,16 +107,13 @@ export class UsersComponent {
     }
   }
   confirmDeleteSelected() {
-      this.deleteProductsDialog = false;
-      this.selectedProducts.forEach((x)=>x.isBlocked=true)
-      console.log(this.selectedProducts);
+      this.deleteProductsDialog = false;      
       this.updateCompany(this.selectedProducts);
       this.selectedProducts = [];
   }
 
   confirmDelete() {
-      this.deleteProductDialog = false;
-      this.product.isBlocked=true;
+      this.deleteProductDialog = false;     
       this.updateCompany([this.product]);    
       this.product = {} as UserDto;
   }
@@ -128,9 +125,12 @@ export class UsersComponent {
   onGlobalFilter(table: Table, event: Event) {
       table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
-  updateCompany(company:UserDto[]){
-    // this.userService.updateCompany(company).subscribe((resp)=>{
-    //   this.getCompanies();
-    // })
+  updateCompany(users:UserDto[]){
+    users.forEach((x)=>{
+      x.isBlocked=!x.isBlocked
+    })
+    this.userService.DeleteUser(users).subscribe((resp)=>{
+      this.getUsers();
+    })
   }
 }

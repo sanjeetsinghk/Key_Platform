@@ -38,7 +38,8 @@ export class AppMenuComponent implements OnInit {
                            { label: 'Entity',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin,RoleType.EntityDeveloper,RoleType.EntityUser], icon: 'pi pi-fw pi-check-square', routerLink: ['/entity']},
                            { label: 'Entity Type',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin,RoleType.EntityDeveloper,RoleType.EntityUser], icon: 'pi pi-fw pi-check-square', routerLink: ['/entitytype']},
                            { label: 'Entity Node',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin,RoleType.EntityDeveloper,RoleType.EntityUser], icon: 'pi pi-fw pi-check-square', routerLink: ['/entitynode']},
-                           { label: 'Entity Node Type',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin,RoleType.EntityDeveloper,RoleType.EntityUser], icon: 'pi pi-fw pi-check-square', routerLink: ['/entitynodetype']}
+                           { label: 'Entity Node Type',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin,RoleType.EntityDeveloper,RoleType.EntityUser], icon: 'pi pi-fw pi-check-square', routerLink: ['/entitynodetype']},
+                           { label: 'Entity Node Component',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin,RoleType.EntityDeveloper,RoleType.EntityUser], icon: 'pi pi-fw pi-check-square', routerLink: ['/entitynodecomponent']}
                         ]
                     },
                     { label: 'Scenarios',role:[RoleType.PlatformAdmin,RoleType.CompanyAdmin,RoleType.EntityDeveloper,RoleType.EntityUser], icon: 'pi pi-user', routerLink: ['/scenario'] },

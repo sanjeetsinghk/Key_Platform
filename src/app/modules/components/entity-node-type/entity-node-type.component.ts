@@ -88,7 +88,8 @@ export class EntityNodeTypeComponent {
   editProduct(product: IEntityNodeTypeModel) {
       this.product = { ...product };      
       this.entityService.selectedEntityModel=product;
-      this.router.navigate(['entitynodetype/details']);
+
+      this.router.navigate(['entitynodetype/details/'+product.id]);
       console.log(this.product)
     
   }

@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
+import { ISelectedCompanyDto } from 'src/app/modules/models/company-selection.model';
 import { IEntityNodeTypCustomFieldsModel } from 'src/app/modules/models/entity-node-type-fields.mode';
 import { IEntityNodeTypeModel } from 'src/app/modules/models/entity-node-type.model';
 
@@ -21,11 +23,30 @@ export class EntityNodeTypeDetailsComponent {
   submitted:boolean=false;
   labels:string[] | undefined;
   customField:IEntityNodeTypCustomFieldsModel[]=[];
-  constructor(private entityTypeService:EntityNodeTypeService, private authService:AuthService,private formBuilder: FormBuilder, public dialogService: DialogService, private messageService: MessageService){}
+  entityId:number=0;
+  selectedEntityModel:IEntityNodeTypeModel;
+  constructor(private router:Router,private activeRouter:ActivatedRoute,private entityTypeService:EntityNodeTypeService, private authService:AuthService,private formBuilder: FormBuilder, public dialogService: DialogService, private messageService: MessageService){}
   ngOnInit(){
-   
     let data=this.entityTypeService.selectedEntityModel;
     this.bindForm(data);
+    this.activeRouter.params.subscribe(result =>
+      {          
+        this.entityId=result["id"];
+        if(this.entityId>0){
+          let details:ISelectedCompanyDto={
+            CompanyId:this.authService.getSelectedCompany(),
+            UserId:this.authService.getUserId(),
+            Id:this.entityId
+          }
+          this.entityTypeService.getEntityNodeTypeById(details).subscribe({
+            next:(resp)=>{
+              data=resp.resultData;
+              this.selectedEntityModel=data;
+              this.bindForm(data);
+            }
+          })
+        }
+      });   
   }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
@@ -84,5 +105,7 @@ save(){
 addItem(data:IEntityNodeTypCustomFieldsModel[]){
   this.customField=data;
 }
-cancel(){}
+cancel(){
+  this.router.navigate(['entitynodetype']);
+}
 }
