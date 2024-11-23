@@ -49,10 +49,12 @@ export class UsersComponent {
         { field: 'externalId', header: 'ExternalId' }
        
     ];
-    this.getUsers();
-    this.getCompanies();     
+   this.initData();   
   }
-
+  initData(){
+    this.getUsers();
+    this.getCompanies();  
+  }
   getUsers(){
     this.userService.GetUserList().subscribe(data => this.companies = data.resultData);
   }
@@ -77,7 +79,7 @@ export class UsersComponent {
     this.ref.onClose.subscribe((product: any) => {
       if (product) {
           this.messageService.add({ severity: 'info', summary: 'User has been invited/updated successfully', detail: product.name });
-          this.getCompanies();
+          this.initData();
       }
     });
   }

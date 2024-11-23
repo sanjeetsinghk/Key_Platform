@@ -65,7 +65,10 @@ export class SignUpComponent {
     get f(): { [key: string]: AbstractControl } {
         return this.form.controls;
         }
-    login() {
+    login(){
+        this.router.navigate(['/auth/login'])
+    }
+    signup() {
         this.submitted = true;
 
         if (this.form.invalid) {

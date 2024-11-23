@@ -198,6 +198,11 @@ export class ScenarioPerformanceIndicatorComponent {
        concatVal+=JSON.parse(x.calculatedValue).value;
       }
       else{
+        if(x.calculatedValue=='++')
+          concatVal+='+1';
+        else if(x.calculatedValue=='--')
+          concatVal+='-1';
+        else
         concatVal+=x.calculatedValue;
       }
     });

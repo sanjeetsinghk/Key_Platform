@@ -106,7 +106,8 @@ export class ProductInfoComponent {
       elementType:[elementType],
       attributeType:[attributeType],
       attributeValues:[attributeValues],
-      selectedValue:[this.utility.isContainJson(data.selectedValue)?JSON.parse(data.selectedValue):data.selectedValue,attributeType=='Required'?[Validators.required]:elementType=='Number' && attributeType =='Range'? [Validators.min(attributeValues.min),Validators.max(attributeValues.max)]:[]]
+      selectedValue:[this.utility.isContainJson(data.selectedValue)?JSON.parse(data.selectedValue):data.selectedValue]
+      //selectedValue:[this.utility.isContainJson(data.selectedValue)?JSON.parse(data.selectedValue):data.selectedValue,attributeType=='Required'?[Validators.required]:elementType=='Number' && attributeType =='Range'? [Validators.min(attributeValues.min),Validators.max(attributeValues.max)]:[]]
     }));
   }
   get f(): { [key: string]: AbstractControl } {
@@ -161,7 +162,7 @@ export class ProductInfoComponent {
       console.log(value)
       let groupArrItems:IEntityInfoDetails[]=[];
       value.groupArr.forEach((x)=>{
-        x.groupArrItems.forEach((item)=>{
+        x.groupArrItems.filter((x)=>!x.isBlocked).forEach((item)=>{
           groupArrItems.push({
             id:this.selectedProduct ?item.id : 0,
             entityTypeFieldId:item.entityTypeFieldId,

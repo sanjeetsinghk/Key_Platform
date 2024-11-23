@@ -201,12 +201,14 @@ save(isSaved=false){
           });
         }
         else{
-          this.customFields.push({
-            name:formValue.name,
-            type:formValue.type.name,
-            constraint:formValue.constraint.name,
-            ...data
-          });
+          console.log("added",this.customFields)
+          if(this.customFields.filter((x)=>x.name==formValue.name).length==0)
+            this.customFields.push({
+              name:formValue.name,
+              type:formValue.type.name,
+              constraint:formValue.constraint.name,
+              ...data
+            });
         }
       }
       
@@ -258,6 +260,7 @@ ngOnChanges(){
   }
   if(this.selectedEntityModel){
     let data=this.selectedEntityModel;
+    this.customFields=[];
     data?.entityNodeTypeFields.forEach((x)=>{
       this.customFields.push({
         name:x.fieldName,

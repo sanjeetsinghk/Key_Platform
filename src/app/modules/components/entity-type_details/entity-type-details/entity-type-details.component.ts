@@ -34,18 +34,7 @@ export class EntityTypeDetailsComponent {
       {          
         this.entityId=result["id"];
         if(this.entityId>0){
-          let details:ISelectedCompanyDto={
-            CompanyId:this.authService.getSelectedCompany(),
-            UserId:this.authService.getUserId(),
-            Id:this.entityId
-          }
-          this.entityTypeService.getEntityTypeById(details).subscribe({
-            next:(resp)=>{    
-              this.entityTypeService.selectedEntityModel =resp.resultData;         
-              this.bindForm(resp.resultData);
-              this.showForm=true;
-            }
-          })
+          this.getSelectedEntityDetails();
         }
         else
         {
@@ -57,6 +46,22 @@ export class EntityTypeDetailsComponent {
   }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
+  }
+  getSelectedEntityDetails(){
+    let details:ISelectedCompanyDto={
+      CompanyId:this.authService.getSelectedCompany(),
+      UserId:this.authService.getUserId(),
+      Id:this.entityId
+    }
+    this.showForm=false;
+    this.entityTypeService.getEntityTypeById(details).subscribe({
+      next:(resp)=>{    
+        this.entityTypeService.selectedEntityModel =resp.resultData; 
+        this.customField=this.entityTypeService.selectedEntityModel.entityCustomFields;
+        this.bindForm(resp.resultData);
+        this.showForm=true;
+      }
+    })
   }
   bindForm(data:IEntityTypeModel){
     this.form=this.formBuilder.group(
@@ -97,14 +102,18 @@ save(){
     if(value.id==0 || value.id==null){
       data.id=0;
       this.entityTypeService.saveEntityType(data).subscribe((resp)=>{
-        this.bindForm(resp.resultData)
+        //this.bindForm(resp.resultData)
         console.log(resp)
+        this.entityId=resp.resultData.id;
+        this.getSelectedEntityDetails();
       });
     }
     else
     {
       this.entityTypeService.updateEntityType(data).subscribe((resp)=>{
-        this.bindForm(resp.resultData)
+        //this.bindForm(resp.resultData)
+        this.entityId=resp.resultData.id;
+        this.getSelectedEntityDetails();
       });
     }
   }

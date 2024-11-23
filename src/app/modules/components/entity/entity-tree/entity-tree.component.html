@@ -13,7 +13,7 @@
                 <div class="col-5">       
                     <p-dropdown 
                     appendTo="body" [filter]="true"  filterBy="nodeName" 
-                    [showClear]="true" [options]="entityNodeComponnetList" optionLabel="nodeName" (onChange)="onEntityNodeComponentSelect($event.value)"
+                    [showClear]="true" [options]="entityNodeComponnetList" [ngModel]="selectedNodeComponentValue" optionLabel="nodeName" (onChange)="onEntityNodeComponentSelect($event.value)"
                     placeholder="Select Entity Node Component" autoWidth="true" style="min-width:100%; min-width:10rem;" />
                 </div>
                 <div class="col-1 mt-1" >

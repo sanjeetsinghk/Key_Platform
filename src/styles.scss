@@ -242,4 +242,12 @@ $gutter: 1rem; //for primeflex grid system
     display: block;
     text-overflow: ellipsis;
   }
+  .tree-column-text{
+    width: 7rem;
+    min-width: 7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    text-overflow: ellipsis;
+  }
 }

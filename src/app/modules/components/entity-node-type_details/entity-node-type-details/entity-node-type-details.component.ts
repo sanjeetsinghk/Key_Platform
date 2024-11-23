@@ -27,26 +27,31 @@ export class EntityNodeTypeDetailsComponent {
   selectedEntityModel:IEntityNodeTypeModel;
   constructor(private router:Router,private activeRouter:ActivatedRoute,private entityTypeService:EntityNodeTypeService, private authService:AuthService,private formBuilder: FormBuilder, public dialogService: DialogService, private messageService: MessageService){}
   ngOnInit(){
-    let data=this.entityTypeService.selectedEntityModel;
-    this.bindForm(data);
+    this.bindForm(null);
     this.activeRouter.params.subscribe(result =>
       {          
         this.entityId=result["id"];
         if(this.entityId>0){
-          let details:ISelectedCompanyDto={
-            CompanyId:this.authService.getSelectedCompany(),
-            UserId:this.authService.getUserId(),
-            Id:this.entityId
-          }
-          this.entityTypeService.getEntityNodeTypeById(details).subscribe({
-            next:(resp)=>{
-              data=resp.resultData;
-              this.selectedEntityModel=data;
-              this.bindForm(data);
-            }
-          })
+         this.getSelectedEntityDetails();
         }
       });   
+  }
+  getSelectedEntityDetails(){
+    let data=this.entityTypeService.selectedEntityModel;
+    this.bindForm(data);
+    let details:ISelectedCompanyDto={
+      CompanyId:this.authService.getSelectedCompany(),
+      UserId:this.authService.getUserId(),
+      Id:this.entityId
+    }
+    this.entityTypeService.getEntityNodeTypeById(details).subscribe({
+      next:(resp)=>{
+        data=resp.resultData;
+        this.selectedEntityModel=data;
+        this.customField=this.selectedEntityModel.entityNodeTypeFields;
+        this.bindForm(data);
+      }
+    })
   }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
@@ -90,13 +95,15 @@ save(){
     if(value.id==0 || value.id==null){
       data.id=0;
       this.entityTypeService.saveEntityType(data).subscribe((resp)=>{
-        this.bindForm(resp.resultData);
+        this.entityId=resp.resultData.id;
+        this.getSelectedEntityDetails();
       });
     }
     else
     {
       this.entityTypeService.updateEntityType(data).subscribe((resp)=>{
-        this.bindForm(resp.resultData);
+        this.entityId=resp.resultData.id;
+        this.getSelectedEntityDetails();
       });
     }
   }

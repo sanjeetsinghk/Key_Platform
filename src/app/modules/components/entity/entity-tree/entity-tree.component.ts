@@ -151,11 +151,21 @@ export class EntityTreeComponent {
       this.deleteAndInsertNode(this.files[0])
     }
   }
+  resetNodeComponnetAction(){
+    this.selectedNodeComponent=null;
+    this.selectedNodeComponentValue=null;
+  }
   deleteAndInsertNode(data:TreeNode){
     try{
       if(data.children.filter((x)=>x.key==this.selectedFiles3.key.toString()).length>0){
         if(this.selectedNodeComponent){
-          data.children.push(this.selectedNodeComponent);
+          data.children.forEach((childrenObj)=>{
+            if(childrenObj.key==this.selectedFiles3.key.toString())
+            {
+              childrenObj.children.push(this.selectedNodeComponent);
+            }
+          })
+          this.resetNodeComponnetAction();
           return;
         }
         else
@@ -228,6 +238,7 @@ export class EntityTreeComponent {
         unique.forEach((item,index)=>{
           this.addGroupArrList(item);
           let items=sortedArray.filter((x:any)=>x.groupName==item);
+          console.log(items)
           items.forEach((x)=>{
             this.fields.push(x.fieldName);
             this.addGroupArrItemsList(x,index);
@@ -303,6 +314,7 @@ export class EntityTreeComponent {
     }
   }
   addedNode(){
+    console.log(this.files[0].key+"=="+this.selectedFiles3.key)
     if(Object.keys(this.selectedFiles3).length === 0){
       this.messageService.add({ severity: 'error', summary: 'Please select node to add the node type', detail: null });
     }
@@ -313,7 +325,8 @@ export class EntityTreeComponent {
         this.generateGUIDForNodes(this.selectedNodeComponent);
         if(this.files[0].key==this.selectedFiles3.key)
         {          
-          this.files[0].children.push(this.selectedNodeComponent);          
+          this.files[0].children.push(this.selectedNodeComponent); 
+          this.resetNodeComponnetAction();         
         }
         else{
           this.deleteAndInsertNode(this.files[0])
@@ -384,7 +397,9 @@ export class EntityTreeComponent {
     console.log(event)
     this.selectedNodeType=event
   }
+  selectedNodeComponentValue:any;
   onEntityNodeComponentSelect(event:any){
+    this.selectedNodeComponentValue=event;
     this.selectedNodeComponent=JSON.parse(event.treeNode);
     console.log(event);
    

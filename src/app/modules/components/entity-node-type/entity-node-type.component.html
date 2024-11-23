@@ -56,7 +56,8 @@
                         </td>
                         <td style="width:14%; min-width:10rem;">
                             <span class="p-column-title">Field</span>
-                            {{getFields(product.entityNodeTypeFields)}}
+                            <span class="tree-column-text" [title]="getFields(product.entityNodeTypeFields)">{{getFields(product.entityNodeTypeFields)}}</span>
+                            
                         </td>
                         <td style="width:14%; min-width:8rem;">
                             <span class="p-column-title">Description</span>

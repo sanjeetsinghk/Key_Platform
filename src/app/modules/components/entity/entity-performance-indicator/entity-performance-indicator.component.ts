@@ -87,10 +87,16 @@ export class EntityPerformanceIndicatorComponent {
       console.log(err)
     }
   }
+  clearFormArray = (formArray: FormArray) => {
+    while (formArray.length !== 0) {
+      formArray.removeAt(0)
+    }
+  }
   ngOnChanges(changes:SimpleChanges){   
     if(this.entityTreeData){
       let treeNode=JSON.parse(this.entityTreeData.treeNode);
       console.log(treeNode)
+      this.clearFormArray(this.groupArrList());
       this.files=[JSON.parse(this.entityTreeData.treeNode)];
       this.files[0].data?.performanceIndicators?.groupArr?.forEach((item:TreeNode)=>{
         this.viewPerformanceMetrics()
@@ -221,6 +227,11 @@ export class EntityPerformanceIndicatorComponent {
        concatVal+=JSON.parse(x.calculatedValue).value;
       }
       else{
+        if(x.calculatedValue=='++')
+          concatVal+='+1';
+        else if(x.calculatedValue=='--')
+          concatVal+='-1';
+        else
         concatVal+=x.calculatedValue;
       }
     });

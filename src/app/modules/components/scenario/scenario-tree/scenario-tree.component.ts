@@ -314,6 +314,11 @@ export class ScenarioTreeComponent {
     console.log(this.selectedFiles3)
     this.selectedNodeType=event
   }
+  clearFormArray = (formArray: FormArray) => {
+    while (formArray.length !== 0) {
+      formArray.removeAt(0)
+    }
+  }
   ngOnChanges(){
     if(this.selectedProduct && this.entityTreeId==0){
       console.log(this.selectedProduct)
@@ -554,11 +559,7 @@ private expandRecursive(node: TreeNode, isExpand: boolean) {
         });
     }
 }
-clearFormArray = (formArray: FormArray) => {
-  while (formArray.length !== 0) {
-    formArray.removeAt(0)
-  }
-}
+
 nodeSelect(event:any){
   this.showForm=false;
   if(event.node?.data?.obj && event.node.data.obj)
